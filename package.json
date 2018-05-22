@@ -1,0 +1,26 @@
+{
+  "name": "gig-api",
+  "version": "1.0.0",
+  "description": "Gigs API",
+  "scripts": {
+    "start": "node ./lib/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Iteam1337/gig-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Iteam1337/gig-api/issues"
+  },
+  "homepage": "https://github.com/Iteam1337/gig-api#readme",
+  "dependencies": {
+    "nconf": "^0.10.0",
+    "node-pg-migrate": "^3.3.0",
+    "path": "^0.12.7",
+    "restify": "^7.2.0"
+  }
+}
