@@ -18,7 +18,9 @@ exports.up = pgm => {
     listed_date: { type: 'timestamp', notNull: false },
     source: { type: 'text', notNull: false },
     entry_by: { type: 'text', notNull: false },
-    source_id: { type: 'text', notNull: true }
+    source_id: { type: 'text', notNull: true },
+    lat: { type: 'numeric', notNull: true },
+    long: { type: 'numeric', notNull: true }
   })
 }
 
