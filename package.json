@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Gigs API",
   "scripts": {
-    "start": "node ./lib/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./node_modules/.bin/node-pg-migrate up && node ./lib/index.js",
+    "start:server": "node ./lib/index.js",
+    "migrate": "./node_modules/.bin/node-pg-migrate up",
+    "migrate:down": "./node_modules/.bin/node-pg-migrate down",
+    "migrate:create": "./node_modules/.bin/node-pg-migrate create"
   },
   "repository": {
     "type": "git",
