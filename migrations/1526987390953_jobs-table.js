@@ -9,18 +9,18 @@ exports.up = pgm => {
     text: { type: 'text', notNull: true },
     created_at: { type: 'timestamp', notNull: true, default: pgm.func('NOW()') },
     language: { type: 'text', notNull: true },
-    url: { type: 'text', notNull: true },
+    link: { type: 'text', notNull: true },
     contact: { type: 'text', notNull: true },
-    fee: { type: 'jsonb', notNull: true },
-    categories: {type: 'jsonb', notNull: true },
+    pay: { type: 'jsonb', notNull: false },
+    categories: {type: 'jsonb', notNull: false },
     start_date: { type: 'timestamp', notNull: true },
     end_date: { type: 'timestamp', notNull: true },
     listed_date: { type: 'timestamp', notNull: false },
     source: { type: 'text', notNull: false },
     entry_by: { type: 'text', notNull: false },
     source_id: { type: 'text', notNull: true },
-    lat: { type: 'numeric', notNull: true },
-    long: { type: 'numeric', notNull: true }
+    latitude: { type: 'numeric', notNull: true },
+    longitude: { type: 'numeric', notNull: true }
   })
 }
 
