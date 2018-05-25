@@ -25,6 +25,7 @@
     "dedent": "^0.7.0",
     "nconf": "^0.10.0",
     "node-pg-migrate": "^3.3.0",
+    "nodemon": "^1.17.5",
     "path": "^0.12.7",
     "restify": "^7.2.0",
     "simple-pg": "^1.0.0",
