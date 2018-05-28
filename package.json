@@ -22,14 +22,15 @@
   },
   "homepage": "https://github.com/Iteam1337/gig-api#readme",
   "dependencies": {
-    "camelcase-keys": "^4.2.0",
-    "dedent": "^0.7.0",
-    "nconf": "^0.10.0",
-    "node-pg-migrate": "^3.3.0",
-    "nodemon": "^1.17.5",
-    "path": "^0.12.7",
-    "restify": "^7.2.0",
-    "simple-pg": "^1.0.0",
-    "snakecase-keys": "^1.1.1"
+    "camelcase-keys": "4.2.0",
+    "cors": "2.8.4",
+    "dedent": "0.7.0",
+    "nconf": "0.10.0",
+    "node-pg-migrate": "3.3.0",
+    "nodemon": "1.17.5",
+    "path": "0.12.7",
+    "restify": "7.2.0",
+    "simple-pg": "1.0.0",
+    "snakecase-keys": "1.1.1"
   }
 }
