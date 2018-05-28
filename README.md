@@ -35,7 +35,7 @@ Finally start the API:
 
 1. First you'll need to contact us to get a clientId and a clientSecret.
 2. Add `x-client-id:${clientId}` and `x-client-secret:${clientSecret}` to your request headers
-3. Post following model: 
+3. Post following model:
 
 #### POST /jobs
 ```
@@ -56,7 +56,8 @@ Finally start the API:
   "source": "Iteam", // Where you found the job, leave null if you're the source, will get from token.
   "sourceId": "1234", // The identifier from the source.
   "longitude": 18.02921, // longitude of the job
-  "latitude": 59.33611 // latitutde of the job
+  "latitude": 59.33611, // latitutde of the job
+  "address": "foo, Stockholm" // the text of the address that will show up in the listing
 }
 ```
 
@@ -84,6 +85,7 @@ Finally start the API:
   "sourceId": "1234", // The identifier from the source.
   "longitude": 18.02921, // longitude of the job
   "latitude": 59.33611, // latitude of the job
+  "address": "foo, Stockholm", // the text of the address that will show up in the listing
   "createdAt": "2018-05-23T22:00:00.000Z" // When it was posted to gig
   "entryBy": "Iteam" // Poster of the job
 }]
