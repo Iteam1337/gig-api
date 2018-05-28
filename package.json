@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "Gigs API",
   "scripts": {
-    "start": "./node_modules/.bin/node-pg-migrate up && node ./lib/index.js",
+    "start": "npm run migrate && npm run start:server",
     "start:server": "node ./lib/index.js",
-    "dev": "DATABASE_URL=postgres://user:password@localhost/gig npm start",
-    "migrate": "./node_modules/.bin/node-pg-migrate up",
-    "migrate:down": "./node_modules/.bin/node-pg-migrate down",
-    "migrate:create": "./node_modules/.bin/node-pg-migrate create"
+    "migrate": "bin/migrate up",
+    "migrate:down": "bin/migrate down",
+    "migrate:create": "bin/migrate create"
   },
   "repository": {
     "type": "git",
