@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+const {
+  database: {
+    user,
+    password,
+    host,
+    database
+  }
+} = require('../lib/config')
+
+const { spawn } = require('child_process')
+const cwd = `${process.cwd()}`.replace(/\/bin(\/)?$/i, '')
+
+const env = Object.assign({}, process.env, {
+  DATABASE_URL: `postgres://${user}:${password}@${host}/${database}`,
+  DATABASE_USER: user,
+  DATABASE_PASSWORD: password
+})
+
+const args = process.argv.slice(2).length ? process.argv.slice(2) : ['up']
+
+const migrate = spawn('node_modules/.bin/node-pg-migrate', args, {
+  cwd, env
+})
+
+migrate.stdout.on('data', data => console.log(`${data}`))
+migrate.stderr.on('data', data => console.error(`${data}`))
+
+migrate.on('close', code => {
+  process.exit(code)
+})
