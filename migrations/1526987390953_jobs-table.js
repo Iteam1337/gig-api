@@ -12,7 +12,7 @@ exports.up = pgm => {
     link: { type: 'text', notNull: true },
     contact: { type: 'text', notNull: true },
     pay: { type: 'jsonb', notNull: false },
-    categories: {type: 'jsonb', notNull: false },
+    categories: { type: 'jsonb', notNull: false },
     start_date: { type: 'timestamp', notNull: true },
     end_date: { type: 'timestamp', notNull: true },
     listed_date: { type: 'timestamp', notNull: false },
