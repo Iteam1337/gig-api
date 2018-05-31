@@ -1,7 +1,7 @@
 exports.up = pgm => {
   pgm.sql(`TRUNCATE jobs CASCADE;`)
 
-  pgm.createExtension('ltree')
+  pgm.sql('CREATE EXTENSION IF NOT EXISTS "ltree";')
 
   pgm.createType('language', ['en', 'sv', 'ar', 'fa', 'so', 'ti'])
   pgm.createType('employment', ['gig', 'employment'])
@@ -38,7 +38,7 @@ exports.down = pgm => {
   pgm.alterColumn('jobs', 'start_date', { type: 'timestamp', notNull: true })
   pgm.alterColumn('jobs', 'end_date', { type: 'timestamp', notNull: true })
 
-  pgm.dropExtension('ltree')
+  pgm.sql('DROP EXTENSION IF EXISTS "ltree" cascade;')
 
   pgm.dropType('language')
   pgm.dropType('employment')

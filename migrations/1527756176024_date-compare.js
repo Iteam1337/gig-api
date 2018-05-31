@@ -1,9 +1,9 @@
 exports.shorthands = undefined
 
 exports.up = pgm => {
-  pgm.createExtension('btree_gist')
+  pgm.sql('CREATE EXTENSION IF NOT EXISTS "btree_gist";')
 }
 
 exports.down = pgm => {
-  pgm.dropExtension('btree_gist')
+  pgm.sql('DROP EXTENSION IF EXISTS "btree_gist" cascade;')
 }
