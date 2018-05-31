@@ -25,6 +25,7 @@
   "dependencies": {
     "camelcase-keys": "4.2.0",
     "cors": "2.8.4",
+    "graphql-request": "^1.6.0",
     "nconf": "0.10.0",
     "node-pg-migrate": "3.3.0",
     "path": "0.12.7",
