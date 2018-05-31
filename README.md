@@ -7,7 +7,7 @@ Gigs API
 Arbetsförmedlingen med partners vill genom öppen innovation undersöka hur digitalisering kan hjälpa utsatta grupper såsom asylsökande och ungdomar som varken jobbar eller därmed står utanför både utbildningssystem och arbetsmarknad. Skulle gig-jobb som riktas till asylsökande kunna utgöra ytterligare ett verktyg för att underlätta etablering och integration?
 Genom att dela kunskap, data och källkod tror vi att flera kan bidra till en bättre arbetsmarknad.
 
-### Vi vill höra din åsikt!
+### Vi vill veta vad du tycker!
 [Här kan du svara på några frågor rörande projektet](https://rebeccanorn.typeform.com/to/n8paEM)
 
 ### API dokumentation
