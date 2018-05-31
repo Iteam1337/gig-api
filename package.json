@@ -1,13 +1,15 @@
 {
   "name": "gig-api",
   "version": "1.0.0",
-  "description": "Gigs API",
+  "description": "Gig API",
+  "main": "lib/index.js",
   "scripts": {
     "start": "npm run migrate && npm run start:server",
     "start:server": "node ./lib/index.js",
     "migrate": "bin/migrate up",
     "migrate:down": "bin/migrate down",
-    "migrate:create": "bin/migrate create"
+    "migrate:create": "bin/migrate create",
+    "dev": "npm run migrate && nodemon"
   },
   "repository": {
     "type": "git",
@@ -23,13 +25,14 @@
   "dependencies": {
     "camelcase-keys": "4.2.0",
     "cors": "2.8.4",
-    "dedent": "0.7.0",
     "nconf": "0.10.0",
     "node-pg-migrate": "3.3.0",
-    "nodemon": "1.17.5",
     "path": "0.12.7",
     "restify": "7.2.0",
     "simple-pg": "1.0.0",
     "snakecase-keys": "1.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "1.17.5"
   }
 }
