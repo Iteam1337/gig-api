@@ -13,19 +13,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Iteam1337/gig-api.git"
+    "url": "git+https://github.com/JobtechSwe/gig-api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Iteam1337/gig-api/issues"
+    "url": "https://github.com/JobtechSwe/gig-api/issues"
   },
-  "homepage": "https://github.com/Iteam1337/gig-api#readme",
+  "homepage": "https://github.com/JobtechSwe/gig-api#readme",
+  "nodemonConfig": {
+    "ignore": ["migrations/*", "bin/*"]
+  },
   "dependencies": {
     "camelcase-keys": "4.2.0",
     "cors": "2.8.4",
-    "graphql-request": "^1.6.0",
+    "graphql-request": "1.6.0",
     "nconf": "0.10.0",
     "node-pg-migrate": "3.3.0",
     "path": "0.12.7",
