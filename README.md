@@ -25,8 +25,8 @@ I framtiden vill vi även göra det möjligt att enkelt kunna ta med sig kunskap
 Ni kommer alltså få mer ansökningar som har erfarenhet som passar giget.
 
 #### Hur kan vi som gig-plattform dela med oss av våra gig till er?
-Genom att posta till vårt API, instruktioner för detta finns på GitHub https://github.com/Iteam1337/gig-api
-
+Genom att posta till vårt API, instruktioner för detta finns [här](https://gig-docs.iteamdev.se/)
+Id och secret behövs för att posta, detta får ni genom att kontakta oss så skapar vi upp det åt er.
 #### Hur hanterar vi språk?
 Man skapar en post för varje språk och taggar den med någon av språkkoderna som finns i dokumentationen sv/en/ar etc. 
 
