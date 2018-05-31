@@ -57,12 +57,6 @@ Then use [Docker compose](https://docs.docker.com/compose/install/)
 
 `$ docker-compose up` This will run postgres in an container.
 
-First you need an enivroment variable for the migrations to run:
-
-`export DATABASE_URL=postgres://user:password@localhost/gig`
-
-Finally start the API:
-
 `npm start` - Runs migrations and starts the API
 
 ### NPM commands
