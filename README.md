@@ -57,19 +57,19 @@ Then use [Docker compose](https://docs.docker.com/compose/install/)
 
 `$ docker-compose up` This will run postgres in an container.
 
-`npm start` - Runs migrations and starts the API
+`$ npm start` - Runs migrations and starts the API
 
 ### NPM commands
 
-`npm start`: Runs migration and starts the API
+`$ npm start` Runs migration and starts the API
 
-`npm start:server`: Starts the API without migrations
+`$ npm start:server` Starts the API without migrations
 
-`npm migrate`: Runs migrations only
+`$ npm migrate` Runs migrations only
 
-`npm migrate:down`: Revert migration
+`$ npm migrate:down` Revert migration
 
-`migrate:create`: Create migration
+`$ npm migrate:create` Create migration
 
 
 ## Please feel free to leave us feedback, open issues and open pull requests
