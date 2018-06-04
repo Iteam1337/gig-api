@@ -12,12 +12,22 @@ const {
 
 const client = new Client(`postgres://${user}:${password}@${host}:${port}/postgres`)
 
+const reject = error => Promise.reject(error)
 describe('teardown', () => {
   it('drops the db', async () => {
     await client.connect()
     await client
+      .query(`
+        SELECT
+          pg_terminate_backend (pg_stat_activity.pid)
+        FROM
+          pg_stat_activity
+        WHERE
+          pg_stat_activity.datname = '${database}';`)
+      .catch(reject)
+    await client
       .query(`DROP DATABASE "${database}";`)
-      .catch(error => Promise.reject(error))
+      .catch(reject)
     return client.end()
   })
 

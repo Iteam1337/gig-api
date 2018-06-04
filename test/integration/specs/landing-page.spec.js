@@ -1,5 +1,5 @@
 const { expect } = require('chai')
-const { request } = require('../helpers')
+const request = require('../helpers/request')
 
 describe('landing-page', () => {
   it('gets the root-page', async () => {
