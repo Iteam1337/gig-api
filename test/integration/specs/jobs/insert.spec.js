@@ -7,12 +7,14 @@ const {
   }
 } = require('../../config')
 
-describe('jobs/insert', () => {
-  let job, jobID
-  beforeEach(() => {
+const psql = require('../../helpers/psql')
 
-    let now = useFakeTimers(Date.now())
-    let then = useFakeTimers(Date.now())
+describe('jobs/insert', () => {
+  let job, jobID, now, then
+
+  before(() => {
+    now = useFakeTimers(Date.now())
+    then = useFakeTimers(Date.now())
 
     then.tick('48:00:00')
 
@@ -62,7 +64,21 @@ describe('jobs/insert', () => {
     return true
   })
 
-  it('saves a gig if token is sent', async () => {
+  let client
+  before(async () => {
+    client = psql()
+    await client.connect()
+  })
+
+  it('checks if there are any jobs in the database', async () => {
+    const results = await client.query(`SELECT COUNT(*) FROM jobs;`)
+
+    const { rows: [{ count }] } = results
+
+    expect(count).to.eql('0')
+  })
+
+  it('saves a job if token is sent', async () => {
     const response = await request({
       path: '/jobs',
       headers: {
@@ -90,6 +106,14 @@ describe('jobs/insert', () => {
     jobID = uuid
   })
 
+
+  it('checks if there are any jobs in the database', async () => {
+    const { rows: [ row ], rowCount } = await client.query(`SELECT * FROM jobs;`)
+    expect(rowCount).to.eql(1)
+    expect(row.id).to.eql(jobID)
+    return true
+  })
+
   it('can get the job!', async () => {
     const { total, totalPages, currentPage, results } = await request({
       path: '/jobs'
@@ -100,5 +124,53 @@ describe('jobs/insert', () => {
     const [ result ] = results
 
     expect(result).to.eql(Object.assign({}, job, { id: jobID }))
+  })
+
+  it('can get the specific job', async () => {
+    const { id } = await request({
+      path: `/job/${jobID}`
+    })
+
+    expect(id).to.eql(jobID)
+  })
+
+  it('does not re-add the same job twice', async () => {
+    const future = useFakeTimers(Date.now())
+
+    future.tick('52:00:00')
+
+    job.endDate = new Date(future.now).toISOString()
+
+    const response = await request({
+      path: '/jobs',
+      headers: {
+        'client-id': site.id,
+        'client-secret': site.secret
+      },
+      options: {
+        method: 'POST',
+        body: job
+      }
+    })
+
+    expect(response).to.have.all.keys('total', 'successful', 'failed', 'results')
+
+    const { results, total, failed, successful } = response
+
+    expect([total, failed, successful]).to.eql([1, 1, 0])
+
+    const { failed: [ { sourceId } ] } = results
+
+    expect(sourceId).to.eql(job.sourceId)
+  })
+
+  it('checks if the job got stuck in database', async () => {
+    const { rows: [ row ], rowCount } = await client.query(`SELECT * FROM jobs;`)
+    expect(rowCount).to.eql(1)
+    expect(new Date(row.end_date).getTime()).to.eql(then.now)
+  })
+
+  after(async () => {
+    await client.end()
   })
 })

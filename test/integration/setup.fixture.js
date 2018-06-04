@@ -1,10 +1,11 @@
 const { spawn } = require('child_process')
 const { existsSync } = require('fs')
-const { Client } = require('pg')
 const chalk = require('chalk')
 
 const log = chalk.keyword('grey')
 const err = chalk.keyword('white')
+
+const client = require('./helpers/psql')('postgres')
 
 const {
   database: {
@@ -18,8 +19,6 @@ const {
 } = require('./config')
 
 const dbURL = `postgres://${user}:${password}@${host}:${port}`
-
-const client = new Client(`${dbURL}/postgres`)
 
 function migrate ({ args = ['up'], ignoreIfNotExist = false }) {
   return new Promise((resolve, reject) => {
@@ -49,15 +48,11 @@ function migrate ({ args = ['up'], ignoreIfNotExist = false }) {
 describe('setup', () => {
   it('creates the db', async () => {
     async function drop () {
-      return client
-        .query(`DROP DATABASE "${database}";`)
-        .catch(error => Promise.reject(error))
+      return client.query(`DROP DATABASE "${database}";`)
     }
 
     async function create () {
-      return client
-        .query(`CREATE DATABASE "${database}" WITH OWNER "${user}" ENCODING 'UTF8';`)
-        .catch(error => Promise.reject(error))
+      return client.query(`CREATE DATABASE "${database}" WITH OWNER "${user}" ENCODING 'UTF8';`)
     }
 
     await client.connect()

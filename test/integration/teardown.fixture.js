@@ -1,21 +1,10 @@
-const { Client } = require('pg')
+const { database: { database } } = require('./config')
+const client = require('./helpers/psql')('postgres')
 
-const {
-  database: {
-    user,
-    password,
-    host,
-    port,
-    database
-  }
-} = require('./config')
-
-const client = new Client(`postgres://${user}:${password}@${host}:${port}/postgres`)
-
-const reject = error => Promise.reject(error)
 describe('teardown', () => {
   it('drops the db', async () => {
     await client.connect()
+
     await client
       .query(`
         SELECT
@@ -24,10 +13,9 @@ describe('teardown', () => {
           pg_stat_activity
         WHERE
           pg_stat_activity.datname = '${database}';`)
-      .catch(reject)
-    await client
-      .query(`DROP DATABASE "${database}";`)
-      .catch(reject)
+
+    await client.query(`DROP DATABASE "${database}";`)
+
     return client.end()
   })
 
