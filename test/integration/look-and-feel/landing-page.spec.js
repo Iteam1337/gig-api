@@ -1,14 +1,9 @@
 const { expect } = require('chai')
-const request = require('request-promise')
-const { port } = require(`${process.cwd()}/lib/config`)
+const { request } = require('../helpers')
 
-describe('gets the root', () => {
-  it('works?', async () => {
-    const response = await request({
-      uri: `http://localhost:${port}`,
-      headers: {},
-      json: true
-    })
+describe('landing-page', () => {
+  it('gets the root-page', async () => {
+    const response = await request({ path: '/' })
 
     expect(response).to.eql({ data: { message: 'Gig API' } })
   })

@@ -9,7 +9,8 @@ const {
     host,
     port,
     database
-  }
+  },
+  debug
 } = require('./config')
 
 const dbURL = `postgres://${user}:${password}@${host}:${port}`
@@ -31,8 +32,10 @@ function migrate ({ args = ['up'], ignoreIfNotExist = false }) {
       })
     })
 
-    // migrate.stdout.on('data', data => console.log(`${data}`))
-    migrate.stderr.on('data', data => console.error(`${data}`))
+    if (debug) {
+      migrate.stdout.on('data', data => console.log(`${data}`))
+      migrate.stderr.on('data', data => console.error(`${data}`))
+    }
 
     migrate.on('close', exitCode =>
       exitCode !== 0 ? reject(exitCode) : resolve(exitCode))
@@ -93,17 +96,16 @@ describe('setup', () => {
       env
     })
 
-    api.on('close', (_code, signal) =>
-      console.log(`closed global.API with signal: ${signal}`))
+    if (debug) {
+      api.on('close', (_code, signal) => console.log(`closed global.API with signal: ${signal}`))
+    }
 
     global.API = api
 
     return new Promise((resolve, reject) => {
       api.stdout.on('data', data => {
-        console.log(`${data}`)
-        if (data.includes('listening on port')) {
-          resolve(data)
-        }
+        if (debug) console.log(`${data}`)
+        if (data.includes('listening on port')) resolve(data)
       })
       api.stderr.on('data', data => {
         console.error(`${data}`)

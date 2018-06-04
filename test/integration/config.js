@@ -17,7 +17,8 @@ const config = nconf
       database: 'gig-integration',
       host: 'localhost',
       port: 5432
-    }
+    },
+    debug: false
   })
 
 module.exports = {
