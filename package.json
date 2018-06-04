@@ -9,6 +9,7 @@
     "migrate": "bin/migrate up",
     "migrate:down": "bin/migrate down",
     "migrate:create": "bin/migrate create",
+    "migrate:integration": "bin/migrate integration",
     "dev": "npm run migrate && nodemon",
     "test": "mocha test/{unit/**,unit}/*.spec.js",
     "test:integration": "mocha test/integration/setup.fixture.js test/integration/**/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"

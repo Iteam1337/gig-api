@@ -75,7 +75,7 @@ describe('setup', () => {
 
   it('integration migrations', () =>
     migrate({
-      args: ['up', '-m', './test/integration/migrations'],
+      args: ['up', '-m', './test/integration/migrations', '-t', 'pgmigrations-integrations'],
       ignoreIfNotExist: 'test/integration/migrations'
     }))
 })
