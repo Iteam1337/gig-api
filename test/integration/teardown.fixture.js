@@ -20,4 +20,34 @@ describe('teardown', () => {
       .catch(error => Promise.reject(error))
     return client.end()
   })
+
+  it('kills global.API', async () => {
+    function wait () {
+      let maxRetries = 10
+      return new Promise((resolve, reject) => {
+        function checkAlive () {
+          if (global.API.killed) {
+            return resolve()
+          }
+
+          if (maxRetries <= 0) {
+            return reject()
+          }
+
+          setTimeout(() => {
+            checkAlive(maxRetries - 1)
+          }, 1000)
+        }
+
+        checkAlive()
+      })
+    }
+
+    global.API.stdin.end()
+    global.API.kill('SIGHUP')
+
+    await wait()
+
+    return true
+  })
 })

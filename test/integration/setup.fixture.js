@@ -78,4 +78,37 @@ describe('setup', () => {
       args: ['up', '-m', './test/integration/migrations', '-t', 'pgmigrations-integrations'],
       ignoreIfNotExist: 'test/integration/migrations'
     }))
+
+  it('starts global.API', () => {
+    const env = Object.assign({}, process.env, {
+      DATABASE__USER: user,
+      DATABASE__PASSWORD: password,
+      DATABASE__HOST: host,
+      DATABASE__PORT: port,
+      DATABASE__DATABASE: database
+    })
+
+    const api = spawn('node', ['lib/index'], {
+      cwd: process.cwd(),
+      env
+    })
+
+    api.on('close', (_code, signal) =>
+      console.log(`closed global.API with signal: ${signal}`))
+
+    global.API = api
+
+    return new Promise((resolve, reject) => {
+      api.stdout.on('data', data => {
+        console.log(`${data}`)
+        if (data.includes('listening on port')) {
+          resolve(data)
+        }
+      })
+      api.stderr.on('data', data => {
+        console.error(`${data}`)
+        reject(data)
+      })
+    })
+  })
 })
