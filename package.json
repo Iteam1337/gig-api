@@ -41,10 +41,12 @@
     "path": "0.12.7",
     "restify": "7.2.0",
     "simple-pg": "1.0.0",
-    "snakecase-keys": "1.1.1"
+    "snakecase-keys": "1.1.1",
+    "striptags": "^3.1.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "chalk": "^2.4.1",
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
     "proxyquire": "^2.0.1",

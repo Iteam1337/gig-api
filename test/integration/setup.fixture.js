@@ -1,6 +1,10 @@
 const { spawn } = require('child_process')
 const { existsSync } = require('fs')
 const { Client } = require('pg')
+const chalk = require('chalk')
+
+const log = chalk.keyword('grey')
+const err = chalk.keyword('white')
 
 const {
   database: {
@@ -104,11 +108,11 @@ describe('setup', () => {
 
     return new Promise((resolve, reject) => {
       api.stdout.on('data', data => {
-        if (debug) console.log(`${data}`)
+        console.log(log(`\n API | ${`${data}`.replace(/\n/g, '\n      ')}`))
         if (data.includes('listening on port')) resolve(data)
       })
       api.stderr.on('data', data => {
-        console.error(`${data}`)
+        console.error(err(`\n API | ${`${data}`.replace(/\n/g, '\n      ')}`))
         reject(data)
       })
     })
