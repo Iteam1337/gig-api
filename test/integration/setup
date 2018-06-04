@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 global.chai = require('chai')
 global.chai.use(require('sinon-chai'))
+global.chai.use(require('chai-uuid'))
