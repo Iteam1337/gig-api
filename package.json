@@ -11,7 +11,7 @@
     "migrate:create": "bin/migrate create",
     "dev": "npm run migrate && nodemon",
     "test": "mocha test/{unit/**,unit}/*.spec.js",
-    "test:integration": "moca test/{integration/**,integration}/*.spec.js --opts test/integration/mocha.opts"
+    "test:integration": "mocha test/integration/setup.fixture.js test/integration/**/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
   },
   "repository": {
     "type": "git",
@@ -48,6 +48,7 @@
     "nodemon": "^1.17.5",
     "proxyquire": "^2.0.1",
     "sinon": "^5.0.10",
-    "sinon-chai": "^3.1.0"
+    "sinon-chai": "^3.1.0",
+    "supertest": "^3.1.0"
   }
 }

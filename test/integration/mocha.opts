@@ -1,2 +1,5 @@
---require ./setup
+--require test/integration/setup
+--forbid-only
+--timeout -1
+# --bail
 --exit
