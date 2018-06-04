@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+global.chai = require('chai')
+global.chai.use(require('sinon-chai'))
+
+const { spawn } = require('child_process')
+const args = process.argv.slice(2).length ? process.argv.slice(2) : ['up']
+
+const {
+  database: {
+    user,
+    password,
+    host,
+    database
+  }
+} = require('../lib/config')
+
+args.push('-m', 'test/integration/migrations')
+
+const migrate = spawn('node_modules/.bin/node-pg-migrate', args, {
+  cwd: `${`${process.cwd()}`.replace(/\/bin(\/)?$/i, '')}`,
+  env: Object.assign({}, process.env, {
+    DATABASE_URL: `postgres://${user}:${password}@${host}/${database}`,
+    DATABASE_USER: user,
+    DATABASE_PASSWORD: password
+  })
+})
+
+migrate.stdout.on('data', data => console.log(`${data}`))
+migrate.stderr.on('data', data => console.error(`${data}`))
+
+migrate.on('close', code => process.exit(code))
