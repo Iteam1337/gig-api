@@ -105,27 +105,33 @@ describe('jobs/insertMultiple', () => {
     expect(sourceId).to.eql(expected.sourceId)
   })
 
-  it('gets the job closest to location', async () => {
-    const { longitude, latitude } = expected
+  it('gets the job closest to location AND respects the experience parameter', async () => {
+    const [longitude, latitude] = [18.05646, 59.32994]
 
     await client.query(`TRUNCATE jobs CASCADE;`)
 
-    {
-      jobs.forEach((job, index) => {
-        job.longitude = parseFloat(longitude + (index * 0.01)).toFixed(5)
-        job.latitude = parseFloat(latitude + (index * 0.01)).toFixed(5)
-      })
-    }
+    jobs.forEach((job, index) => {
+      job.longitude = parseFloat(longitude + (index * 0.01)).toFixed(5)
+      job.latitude = parseFloat(latitude + (index * 0.01)).toFixed(5)
+    })
 
     await post(jobs)
 
-    const params = `longitude=${longitude}&latitude=${latitude}&experience=4.4.10&orderBy=relevance&pageLimit=5`
-
-    const { results } = await request({
-      path: `/jobs?${params}`
+    const { results: [ first, second, third ] } = await request({
+      path: `/jobs?longitude=${longitude}&latitude=${latitude}&experience=4.4.1&orderBy=relevance&pageLimit=5`
     })
 
-    console.log(results)
+    expect([
+      first.sourceId, Math.floor(first.distance),
+      second.sourceId, Math.floor(second.distance),
+      third.sourceId, Math.floor(third.distance)
+    ])
+      .to
+      .eql([
+        jobs[0].sourceId, 0,
+        jobs[2].sourceId, 2499,
+        jobs[1].sourceId, 1249
+      ])
   })
 
 
