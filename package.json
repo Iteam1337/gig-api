@@ -39,8 +39,8 @@
     "nconf": "0.10.0",
     "node-pg-migrate": "3.3.0",
     "path": "0.12.7",
+    "pg-promise": "^8.4.4",
     "restify": "7.2.0",
-    "simple-pg": "1.0.0",
     "snakecase-keys": "1.1.1",
     "striptags": "3.1.1"
   },
