@@ -10,7 +10,7 @@ const {
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
 
-const jobsJSON = require('./jobs.json')
+const jobsJSON = require('./jobs.fixture.json')
 
 describe('jobs/insertMultiple', () => {
   let now, client
@@ -104,9 +104,24 @@ describe('jobs/insertMultiple', () => {
   })
 
   it('gets the job closest to location', async () => {
-    const { results: [ { sourceId } ] } = await request({ path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1` })
+    const { results: [ { sourceId } ] } = await request({
+      path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1`
+    })
     expect(sourceId).to.eql(expected.sourceId)
   })
+
+  it('gets the job closest to location', async () => {
+    const { longitude, latitude } = expected
+
+    const params = `longitude=${longitude}&latitude=${latitude}&experience=2.12.90&orderBy=relevance&pageLimit=5`
+
+    const { results } = await request({
+      path: `/jobs?${params}`
+    })
+
+    console.log(results.map(({ experience, address }) => [experience, address]))
+  })
+
 
   after(async () => {
     await client.query(`TRUNCATE jobs CASCADE;`)
