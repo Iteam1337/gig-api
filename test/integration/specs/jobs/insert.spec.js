@@ -10,7 +10,7 @@ const {
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
 
-xdescribe('jobs/insert', () => {
+describe('jobs/insert', () => {
   let job, jobID, now
 
   before(() => {

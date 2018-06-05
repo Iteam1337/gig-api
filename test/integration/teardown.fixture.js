@@ -29,7 +29,6 @@ function wait () {
   })
 }
 
-
 describe('teardown', () => {
   it('drops the db', async () => {
     await client.connect()

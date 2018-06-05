@@ -130,7 +130,7 @@ describe('jobs/insertMultiple', () => {
 
 
   after(async () => {
-    // await client.query(`TRUNCATE jobs CASCADE;`)
+    await client.query(`TRUNCATE jobs CASCADE;`)
     await client.end()
   })
 })
