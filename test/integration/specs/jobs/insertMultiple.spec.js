@@ -10,14 +10,15 @@ const {
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
 
+const jobsJSON = require('./jobs.json')
+
 describe('jobs/insertMultiple', () => {
   let now, client
 
   before(async () => {
-    now = useFakeTimers(Date.now())
-
     client = psql()
     await client.connect()
+    now = useFakeTimers(Date.now())
   })
 
   it('checks if there are any jobs in the database', async () => {
@@ -49,6 +50,41 @@ describe('jobs/insertMultiple', () => {
     })
 
     expect(response.total).to.eql(12)
+
+    await client.query(`TRUNCATE jobs CASCADE;`)
+  })
+
+  let jobs
+  beforeEach(async () => {
+    jobs = jobsJSON.map(object => {
+      return generateJob(Object.assign({}, {
+        company: site.name,
+        source: site.name,
+        from: now
+      }, object))
+    })
+  })
+
+  it('inserts multiple jobs and queries', async () => {
+    const response = await request({
+      path: '/jobs',
+      headers: {
+        'client-id': site.id,
+        'client-secret': site.secret
+      },
+      options: {
+        method: 'POST',
+        body: jobs
+      }
+    })
+
+    expect(response.total).to.eql(jobs.length)
+  })
+
+  it('gets the job closest to location', async () => {
+    const expected = jobs.find(job => job.address === 'Nils Ericsons Plan, Stockholm')
+    const { results: [ { sourceId } ] } = await request({ path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1` })
+    expect(sourceId).to.eql(expected.sourceId)
   })
 
   after(async () => {

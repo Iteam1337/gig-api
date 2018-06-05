@@ -21,7 +21,7 @@ module.exports = ({
   paymentType = 'hourly',
   address = 'Östermalmsgatan 26A, 114 26 Stockholm'
 }) => {
-  from = Date.parse(from) > 0 ? from : useFakeTimers(Date.now())
+  from = useFakeTimers(from && from.now || Date.now())
 
   const to = useFakeTimers(Date.now(from.now))
 

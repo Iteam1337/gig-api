@@ -1,0 +1,268 @@
+[
+  {
+    "latitude": 59.3463172,
+    "longitude": 18.0509773,
+    "address": "Hagagatan, Stockholm",
+    "type": "gig",
+    "language": "sv",
+    "experience": ["1.2.3"]
+  },
+  {
+    "latitude": 57.7853,
+    "longitude": 14.15812,
+    "address": "Järnvägsgatan, Jönköping",
+    "type": "gig",
+    "language": "sv",
+    "experience": ["1.2.3", "12.45.21"]
+  },
+  {
+    "latitude": 55.60497,
+    "longitude": 12.9840199,
+    "address": "Malmöhusvägen, Malmö",
+    "type": "gig",
+    "language": "en"
+  },
+  {
+    "latitude": 59.27646,
+    "longitude": 15.2174,
+    "address": "Slottsgatan, Örebro",
+    "type": "gig",
+    "language": "ar"
+  },
+  {
+    "latitude": 57.70446,
+    "longitude": 11.96644,
+    "address": "Kungsgatan, Göteborg",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "en"
+  },
+  {
+    "latitude": 59.32994,
+    "longitude": 18.05646,
+    "address": "Nils Ericsons Plan, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.31686,
+    "longitude": 18.06723,
+    "address": "Fredmansgatan, Stockholm",
+    "type": "gig",
+    "language": "ar"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 65.8269,
+    "longitude": 21.70261,
+    "address": "Boden",
+    "type": "gig",
+    "language": "ti"
+  },
+  {
+    "latitude": 59.03971,
+    "longitude": 12.70762,
+    "address": "Bondegatan, Åmål",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 56.67175,
+    "longitude": 16.32752,
+    "address": "Celsiusgatan, Kalmar",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 63.01425,
+    "longitude": 17.79088,
+    "address": "Flottarvägen, Nyland",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.4115,
+    "longitude": 13.49528,
+    "address": "Norra Infarten, Karlstad",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.26524,
+    "longitude": 17.90706,
+    "address": "Månskärsvägen, Kungens Kurva",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.3291,
+    "longitude": 18.06237,
+    "address": "Tegelbacken 4A, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.3396915,
+    "longitude": 18.0576664,
+    "address": "Kungstensgatan 53, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.3320898,
+    "longitude": 18.0574901,
+    "address": "Centralplan 15, Stockholm",
+    "type": "gig",
+    "language": "so"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "so"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "fa"
+  },
+  {
+    "latitude": 60.67777,
+    "longitude": 17.17943,
+    "address": "Atlasgatan 3, Gävle",
+    "type": "gig",
+    "language": "fa"
+  },
+  {
+    "latitude": 60.67777,
+    "longitude": 17.17943,
+    "address": "Atlasgatan 3, Gävle",
+    "type": "gig",
+    "language": "en"
+  },
+  {
+    "latitude": 60.67777,
+    "longitude": 17.17943,
+    "address": "Atlasgatan 3, Gävle",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 60.67777,
+    "longitude": 17.17943,
+    "address": "Atlasgatan 3, Gävle",
+    "type": "gig",
+    "language": "so"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "ti"
+  },
+  {
+    "latitude": 59.3490301,
+    "longitude": 18.1132685,
+    "address": "Hangövägen 25, Stockholm",
+    "type": "employment",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.33611,
+    "longitude": 18.02921,
+    "address": "Alströmergatan, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.64567,
+    "longitude": 17.94767,
+    "address": ", Stockholm-Arlanda",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 59.6193811,
+    "longitude": 17.8562915,
+    "address": "Nymärsta gränd 2, Märsta",
+    "type": "employment",
+    "language": "en"
+  },
+  {
+    "latitude": 59.3490301,
+    "longitude": 18.1132685,
+    "address": "Hangövägen 25, Stockholm",
+    "type": "gig",
+    "language": "sv"
+  },
+  {
+    "latitude": 57.7003398,
+    "longitude": 11.9440083,
+    "address": "Första långgatan 17, Göteborg",
+    "type": "employment",
+    "language": "sv",
+    "skills": ["1.1.1"]
+  },
+  {
+    "latitude": 59.3490301,
+    "longitude": 18.1132685,
+    "address": "Hangövägen 25, Stockholm",
+    "type": "employment",
+    "language": "ti",
+    "experience": ["22.145.1426"]
+  },
+  {
+    "latitude": 59.3361377,
+    "longitude": 18.0708027,
+    "address": "Norrlandsgatan 23, Stockholm",
+    "type": "employment",
+    "language": "sv",
+    "experience": ["2.12.90"]
+  },
+  {
+    "latitude": 59.3490301,
+    "longitude": 18.1132685,
+    "address": "Hangövägen 25, Stockholm",
+    "type": "employment",
+    "language": "fa",
+    "languageSkills": ["401"]
+  },
+  {
+    "latitude": 59.3411404,
+    "longitude": 18.1215663,
+    "address": "Frihamnsgatan 56, Stockholm",
+    "type": "employment",
+    "language": "en",
+    "languageSkills": ["380", "310"]
+  }
+]
