@@ -9,7 +9,7 @@ module.exports = ({
   text = 'bar',
   title = 'foo',
   type = 'gig',
-  sourceId = uuid(),
+  sourceId = null,
   experience = null,
   skills = null,
   education = null,
@@ -28,7 +28,7 @@ module.exports = ({
   to.tick('48:00:00')
 
   return {
-    sourceId,
+    sourceId: sourceId || uuid(),
     type,
     company,
     title,

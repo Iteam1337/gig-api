@@ -54,8 +54,8 @@ describe('jobs/insertMultiple', () => {
     await client.query(`TRUNCATE jobs CASCADE;`)
   })
 
-  let jobs
-  beforeEach(async () => {
+  let jobs, expected
+  before(async () => {
     jobs = jobsJSON.map(object => {
       return generateJob(Object.assign({}, {
         company: site.name,
@@ -63,6 +63,7 @@ describe('jobs/insertMultiple', () => {
         from: now
       }, object))
     })
+    expected = jobs.find(job => job.address === 'Nils Ericsons Plan, Stockholm')
   })
 
   it('inserts multiple jobs and queries', async () => {
@@ -81,8 +82,28 @@ describe('jobs/insertMultiple', () => {
     expect(response.total).to.eql(jobs.length)
   })
 
+  it('gets the job using SQL (lat|lon)', async () => {
+    const { rows: [ row ] } = await client.query(`
+      SELECT
+        * FROM jobs
+        , earth_distance(
+          ll_to_earth('${expected.latitude}', '${expected.longitude}'),
+          ll_to_earth(jobs.latitude, jobs.longitude)
+        ) AS distance
+      WHERE
+        end_date > now()
+      ORDER BY
+        distance ASC
+      OFFSET '0'
+      LIMIT '1';
+    `)
+
+    const { source_id: sourceId } = row
+
+    expect(sourceId).to.eql(expected.sourceId)
+  })
+
   it('gets the job closest to location', async () => {
-    const expected = jobs.find(job => job.address === 'Nils Ericsons Plan, Stockholm')
     const { results: [ { sourceId } ] } = await request({ path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1` })
     expect(sourceId).to.eql(expected.sourceId)
   })
