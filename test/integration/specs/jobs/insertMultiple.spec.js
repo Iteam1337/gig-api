@@ -12,6 +12,20 @@ const generateJob = require('../../helpers/generateJob')
 
 const jobsJSON = require('./jobs.fixture.json')
 
+function post (body = []) {
+  return request({
+    path: '/jobs',
+    headers: {
+      'client-id': site.id,
+      'client-secret': site.secret
+    },
+    options: {
+      method: 'POST',
+      body
+    }
+  })
+}
+
 describe('jobs/insertMultiple', () => {
   let now, client
 
@@ -37,17 +51,7 @@ describe('jobs/insertMultiple', () => {
         from: now
       }))
 
-    const response = await request({
-      path: '/jobs',
-      headers: {
-        'client-id': site.id,
-        'client-secret': site.secret
-      },
-      options: {
-        method: 'POST',
-        body: jobs
-      }
-    })
+    const response = await post(jobs)
 
     expect(response.total).to.eql(12)
 
@@ -67,17 +71,7 @@ describe('jobs/insertMultiple', () => {
   })
 
   it('inserts multiple jobs and queries', async () => {
-    const response = await request({
-      path: '/jobs',
-      headers: {
-        'client-id': site.id,
-        'client-secret': site.secret
-      },
-      options: {
-        method: 'POST',
-        body: jobs
-      }
-    })
+    const response = await post(jobs)
 
     expect(response.total).to.eql(jobs.length)
   })
@@ -107,24 +101,36 @@ describe('jobs/insertMultiple', () => {
     const { results: [ { sourceId } ] } = await request({
       path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1`
     })
+
     expect(sourceId).to.eql(expected.sourceId)
   })
 
   it('gets the job closest to location', async () => {
     const { longitude, latitude } = expected
 
-    const params = `longitude=${longitude}&latitude=${latitude}&experience=2.12.90&orderBy=relevance&pageLimit=5`
+    await client.query(`TRUNCATE jobs CASCADE;`)
+
+    {
+      jobs.forEach((job, index) => {
+        job.longitude = parseFloat(longitude + (index * 0.01)).toFixed(5)
+        job.latitude = parseFloat(latitude + (index * 0.01)).toFixed(5)
+      })
+    }
+
+    await post(jobs)
+
+    const params = `longitude=${longitude}&latitude=${latitude}&experience=4.4.10&orderBy=relevance&pageLimit=5`
 
     const { results } = await request({
       path: `/jobs?${params}`
     })
 
-    console.log(results.map(({ experience, address }) => [experience, address]))
+    console.log(results)
   })
 
 
   after(async () => {
-    await client.query(`TRUNCATE jobs CASCADE;`)
+    // await client.query(`TRUNCATE jobs CASCADE;`)
     await client.end()
   })
 })
