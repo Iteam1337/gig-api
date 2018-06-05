@@ -147,6 +147,7 @@ describe('jobs/insert', () => {
   })
 
   after(async () => {
+    await client.query(`TRUNCATE jobs CASCADE;`)
     await client.end()
   })
 })

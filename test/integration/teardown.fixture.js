@@ -1,12 +1,19 @@
 const { database: { database } } = require('./config')
 const client = require('./helpers/psql')('postgres')
+const request = require('./helpers/request')
 
 function wait () {
   let maxRetries = 10
   return new Promise((resolve, reject) => {
-    function checkAlive () {
+    async function checkAlive () {
       if (global.API.killed) {
-        return resolve()
+        try {
+          await request({ path: '/' })
+          global.API.stdin.end()
+          global.API.kill('SIGHUP')
+        } catch (error) {
+          return resolve()
+        }
       }
 
       if (maxRetries <= 0) {
@@ -46,7 +53,6 @@ describe('teardown', () => {
     global.API.kill('SIGHUP')
 
     await wait()
-
     return true
   })
 })
