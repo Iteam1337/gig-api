@@ -12,7 +12,7 @@
     "migrate:integration": "bin/migrate integration",
     "dev": "npm run migrate && nodemon",
     "test": "mocha test/{unit/**,unit}/*.spec.js",
-    "test:integration": "mocha test/integration/setup.fixture.js test/integration/{specs,specs/**}/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
+    "test:integration": "bin/kill-process && mocha test/integration/setup.fixture.js test/integration/{specs,specs/**}/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
   },
   "repository": {
     "type": "git",

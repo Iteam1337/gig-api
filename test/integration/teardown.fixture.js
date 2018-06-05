@@ -9,8 +9,8 @@ function wait () {
       if (global.API.killed) {
         try {
           await request({ path: '/' })
-          global.API.stdin.end()
-          global.API.kill('SIGHUP')
+          await global.API.stdin.end()
+          await global.API.kill('SIGHUP')
         } catch (error) {
           return resolve()
         }
@@ -49,8 +49,8 @@ describe('teardown', () => {
   })
 
   it('kills global.API', async () => {
-    global.API.stdin.end()
-    global.API.kill('SIGHUP')
+    await global.API.stdin.end()
+    await global.API.kill('SIGHUP')
 
     await wait()
     return true

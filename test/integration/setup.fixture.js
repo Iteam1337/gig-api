@@ -90,7 +90,7 @@ describe('setup', () => {
       DATABASE__DATABASE: database
     })
 
-    const api = spawn('node', ['lib/index'], {
+    const api = spawn('node', ['lib/index', '--integration'], {
       cwd: process.cwd(),
       env
     })

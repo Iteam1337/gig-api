@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set +o pipefail
+pid="$(ps aux|grep "node lib/index.js"|head -n1|awk '{print $2}')"
+
+if [ ! -z "${pid}" ]; then
+  kill "${pid}" 2>/dev/null | true
+fi
