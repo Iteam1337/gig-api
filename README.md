@@ -1,5 +1,8 @@
 # Gig
-Gigs API
+Arbetsförmedlingen and Länsstyrelsen Stockholm invite you to participate in a pilot to supply gig jobs!
+Apply or show your interest by clicking on the link below…
+
+Contact: Maria Dalhage Digital Policy Co-ordinator Arbetsförmedlingen
 
 
 ## Om det här projektet
@@ -7,8 +10,8 @@ Gigs API
 Arbetsförmedlingen med partners vill genom öppen innovation undersöka hur digitalisering kan hjälpa utsatta grupper såsom asylsökande och ungdomar som varken jobbar eller därmed står utanför både utbildningssystem och arbetsmarknad. Skulle gig-jobb som riktas till asylsökande kunna utgöra ytterligare ett verktyg för att underlätta etablering och integration?
 Genom att dela kunskap, data och källkod tror vi att flera kan bidra till en bättre arbetsmarknad.
 
-### Vi vill veta vad du tycker!
-[Här kan du svara på några frågor rörande projektet](https://rebeccanorn.typeform.com/to/n8paEM)
+### Application
+[Click here to apply](https://rebeccanorn.typeform.com/to/n8paEM)
 
 ### API dokumentation
 [Dokumentation för att använda API't](https://gig-docs.iteamdev.se/)
@@ -28,7 +31,7 @@ Ni kommer alltså få mer ansökningar som har erfarenhet som passar giget.
 Genom att posta till vårt API, instruktioner för detta finns [här](https://gig-docs.iteamdev.se/)
 Id och secret behövs för att posta, detta får ni genom att kontakta oss så skapar vi upp det åt er.
 #### Hur hanterar vi språk?
-Man skapar en post för varje språk och taggar den med någon av språkkoderna som finns i dokumentationen sv/en/ar etc. 
+Man skapar en post för varje språk och taggar den med någon av språkkoderna som finns i dokumentationen sv/en/ar etc.
 
 #### Hur hanterar vi datum?
 Det finns flera olika datum som intresserar oss, när jobbet börjar, när det slutar och när ni öppnade upp jobbet i eran plattform.
