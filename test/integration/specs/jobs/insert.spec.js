@@ -8,43 +8,19 @@ const {
 } = require('../../config')
 
 const psql = require('../../helpers/psql')
+const generateJob = require('../../helpers/generateJob')
 
 describe('jobs/insert', () => {
-  let job, jobID, now, then
+  let job, jobID, now
 
   before(() => {
     now = useFakeTimers(Date.now())
-    then = useFakeTimers(Date.now())
 
-    then.tick('48:00:00')
-
-    job = {
-      sourceId: 'a0z9',
-      type: 'gig',
+    job = generateJob({
       company: site.name,
-      title: 'foo',
-      preamble: 'bar',
-      text: 'bar',
-      createdAt: new Date(now.now).toISOString(),
-      language: 'sv',
-      link: 'http://foo.bar',
-      contact: 'mail@dennispettersson.se',
-      currency: 'SEK',
-      pay: 100,
-      paymentType: 'hourly',
-      startDate: new Date(now.now).toISOString(),
-      endDate: new Date(then.now).toISOString(),
-      listedDate: new Date(now.now).toISOString(),
       source: site.name,
-      entryBy: 'integration',
-      latitude: 59.3454567,
-      longitude: 18.060362,
-      address: 'Östermalmsgatan 26A, 114 26 Stockholm',
-      experience: null,
-      skills: null,
-      education: null,
-      languageSkills: null
-    }
+      from: now
+    })
   })
 
   it('responds with a error if no token is sent', async () => {
@@ -167,7 +143,7 @@ describe('jobs/insert', () => {
   it('checks if the job got stuck in database', async () => {
     const { rows: [ row ], rowCount } = await client.query(`SELECT * FROM jobs;`)
     expect(rowCount).to.eql(1)
-    expect(new Date(row.end_date).getTime()).to.eql(then.now)
+    expect(row.source_id).to.eql(job.sourceId)
   })
 
   after(async () => {
