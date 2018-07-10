@@ -10,7 +10,21 @@ const {
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
 
-const jobsJSON = require('./jobs.json')
+const jobsJSON = require('./jobs.fixture.json')
+
+function post (body = []) {
+  return request({
+    path: '/jobs',
+    headers: {
+      'client-id': site.id,
+      'client-secret': site.secret
+    },
+    options: {
+      method: 'POST',
+      body
+    }
+  })
+}
 
 describe('jobs/insertMultiple', () => {
   let now, client
@@ -37,17 +51,7 @@ describe('jobs/insertMultiple', () => {
         from: now
       }))
 
-    const response = await request({
-      path: '/jobs',
-      headers: {
-        'client-id': site.id,
-        'client-secret': site.secret
-      },
-      options: {
-        method: 'POST',
-        body: jobs
-      }
-    })
+    const response = await post(jobs)
 
     expect(response.total).to.eql(12)
 
@@ -67,17 +71,7 @@ describe('jobs/insertMultiple', () => {
   })
 
   it('inserts multiple jobs and queries', async () => {
-    const response = await request({
-      path: '/jobs',
-      headers: {
-        'client-id': site.id,
-        'client-secret': site.secret
-      },
-      options: {
-        method: 'POST',
-        body: jobs
-      }
-    })
+    const response = await post(jobs)
 
     expect(response.total).to.eql(jobs.length)
   })
@@ -104,9 +98,42 @@ describe('jobs/insertMultiple', () => {
   })
 
   it('gets the job closest to location', async () => {
-    const { results: [ { sourceId } ] } = await request({ path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1` })
+    const { results: [ { sourceId } ] } = await request({
+      path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1`
+    })
+
     expect(sourceId).to.eql(expected.sourceId)
   })
+
+  it('gets the job closest to location AND respects the experience parameter', async () => {
+    const [longitude, latitude] = [18.05646, 59.32994]
+
+    await client.query(`TRUNCATE jobs CASCADE;`)
+
+    jobs.forEach((job, index) => {
+      job.longitude = parseFloat(longitude + (index * 0.01)).toFixed(5)
+      job.latitude = parseFloat(latitude + (index * 0.01)).toFixed(5)
+    })
+
+    await post(jobs)
+
+    const { results: [ first, second, third ] } = await request({
+      path: `/jobs?longitude=${longitude}&latitude=${latitude}&experience=4.4.1&orderBy=relevance&pageLimit=5`
+    })
+
+    expect([
+      first.sourceId, Math.floor(first.distance),
+      second.sourceId, Math.floor(second.distance),
+      third.sourceId, Math.floor(third.distance)
+    ])
+      .to
+      .eql([
+        jobs[0].sourceId, 0,
+        jobs[2].sourceId, 2499,
+        jobs[1].sourceId, 1249
+      ])
+  })
+
 
   after(async () => {
     await client.query(`TRUNCATE jobs CASCADE;`)

@@ -13,14 +13,15 @@
     "address": "Järnvägsgatan, Jönköping",
     "type": "gig",
     "language": "sv",
-    "experience": ["1.2.3", "12.45.21"]
+    "experience": ["3.2", "12.45"]
   },
   {
     "latitude": 55.60497,
     "longitude": 12.9840199,
     "address": "Malmöhusvägen, Malmö",
     "type": "gig",
-    "language": "en"
+    "language": "en",
+    "experience": ["4.4.1"]
   },
   {
     "latitude": 59.27646,
