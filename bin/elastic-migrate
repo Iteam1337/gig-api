@@ -106,14 +106,10 @@ async function up ({ client, migrations, lastDocument }) {
     .filter(([ date ]) => date > lastDocument.date)
 
   if (!keys.length) {
-    return console.log(`
-  NO MIGRATIONS
-    `)
+    return console.log(`No migrations`)
   }
 
-  console.log(`
-  MIGRATE UP
-  `)
+  console.log(`> Migrating files:\n${keys.map(([ _date, _name, filename ]) => `\n> - ${filename}`)}`)
 
   await Promise.all(keys.map(async ([ date, name, filename ]) => {
     const dir = migrations[filename]['up']
@@ -129,16 +125,14 @@ async function up ({ client, migrations, lastDocument }) {
 
     await saveJob({ client, date, name, filename })
 
-    console.log(`\n${filename}:\n-----------\n`, dir)
+    console.log(`\n### MIGRATION ${filename} (UP) ###\n\n`, dir)
   }))
 }
 
 async function down ({ client, migrations, lastDocument: { filename } }) {
   const dir = migrations[filename]['down']
 
-  console.log(`
-  MIGRATE DOWN
-  `)
+  console.log(`> Migrating files:\n\n> - ${filename}`)
 
   if (dir && typeof dir === 'function') {
     try {
@@ -151,7 +145,7 @@ async function down ({ client, migrations, lastDocument: { filename } }) {
 
   await removeJob({ client, filename })
 
-  console.log(`\n${filename}:\n-----------\n`, dir)
+  console.log(`\n### MIGRATION ${filename} (DOWN) ###\n\n`, dir)
 }
 
 async function migrate (direction = 'up', paths) {
@@ -184,16 +178,16 @@ async function migrate (direction = 'up', paths) {
 }
 
 async function create (name = '') {
-  console.log(`
-  CREATE MIGRATION
-  `)
-
   if (!name) {
     return process.exit(1)
   }
 
   const filename = `${Date.now()}_${name}.js`
-  writeFileSync(`${MIGRATIONS_DIR}/${filename}`, `exports.up = async _client => {}\n\nexports.down = async _client => {}\n`)
+  const path = `${MIGRATIONS_DIR}/${filename}`
+
+  console.log(`Create elasticsearch migration ${path}`)
+
+  writeFileSync(path, `exports.up = async _client => {}\n\nexports.down = async _client => {}\n`)
 }
 
 async function main () {
@@ -213,6 +207,7 @@ async function main () {
     }
 
     await migrate(direction, paths)
+    console.log('Elasticsearch migrations complete!')
   } else if (argsString.startsWith('create')) {
     await create(argsSlice[1])
   }
