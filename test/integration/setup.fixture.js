@@ -107,11 +107,13 @@ describe('setup', () => {
 
   it('starts global.API', () => {
     const env = Object.assign({}, process.env, {
-      DATABASE__USER: user,
-      DATABASE__PASSWORD: password,
-      DATABASE__HOST: host,
-      DATABASE__PORT: port,
-      DATABASE__DATABASE: database
+      database__user: user,
+      database__password: password,
+      database__host: host,
+      database__port: port,
+      database__database: database,
+      elastic__host: elasticHost,
+      elastic__indexPrefix: indexPrefix
     })
 
     const api = spawn('node', ['lib/index', '--integration'], {
