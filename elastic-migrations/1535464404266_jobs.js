@@ -1,6 +1,6 @@
-const index = 'jobs'
 
 exports.up = async client => {
+  const index = `${client.indexPrefix}jobs`
   const exists = await client.indices.exists({ index })
 
   if (exists) {
@@ -8,7 +8,7 @@ exports.up = async client => {
   }
 
   return client.indices.create({
-    index: 'jobs',
+    index,
     body: {
       settings: {
         index: {
@@ -26,7 +26,7 @@ exports.up = async client => {
             text: { type: 'text' },
             created_at: { type: 'date' },
             link: { type: 'text' },
-            contract: { type: 'text' },
+            contact: { type: 'text' },
             start_date: { type: 'date' },
             end_date: { type: 'date' },
             listed_date: { type: 'date' },
@@ -52,6 +52,8 @@ exports.up = async client => {
 }
 
 exports.down = async client => {
+  const index = `${client.indexPrefix}jobs`
+
   const exists = await client.indices.exists({ index })
 
   if (!exists) {

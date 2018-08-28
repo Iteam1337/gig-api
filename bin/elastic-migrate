@@ -14,7 +14,7 @@ const MIGRATIONS_DIR = `${CWD}/elastic-migrations`
 let client // GLOBAL CLIENT
 
 async function setGlobalClient () {
-  client = new Client({ host })
+  client = Object.assign(new Client({ host }), { indexPrefix })
 
   const ok = await checkIndex()
 
@@ -73,6 +73,7 @@ async function last () {
             }
           }
         },
+        from: 0,
         size: 1
       }
     })
