@@ -3,6 +3,7 @@ const { sites } = require('../config')
 
 exports.up = pgm => {
   pgm.sql(`
+    DELETE FROM allowed_clients;
     INSERT INTO allowed_clients (id, secret, name) VALUES
       ${
           // it's not insecure, it's a testscript!
