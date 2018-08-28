@@ -4,9 +4,10 @@ const { writeFileSync } = require('fs')
 const { Client } = require('elasticsearch')
 const reqdir = require('require-dir')
 
-const { elastic: { host } }  = require('../lib/config')
+const { elastic: { host, indexPrefix } } = require('../lib/config')
 
-const INDEX = 'migrations'
+const INDEX = `${indexPrefix}migrations`
+
 const TYPE = 'migration'
 const CWD = `${process.cwd()}`.replace(/\/bin(\/)?$/i, '')
 const MIGRATIONS_DIR = `${CWD}/elastic-migrations`

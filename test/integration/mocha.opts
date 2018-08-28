@@ -1,5 +1,5 @@
 --require test/integration/setup
---forbid-only
+# --forbid-only
 --timeout -1
 --slow 1000
 # --bail

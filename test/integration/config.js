@@ -2,8 +2,7 @@ const nconf = require('nconf')
 
 const config = nconf
   .env({
-    separator: '__',
-    lowerCase: true
+    separator: '__'
   })
   .file({
     file: 'config-integration.json',
@@ -35,11 +34,16 @@ const config = nconf
         secret: 'b320b8dd-e0be-42cb-a158-48a54d7d30bd',
         name: 'taskrunner'
       }
+    },
+    elastic: {
+      host: 'localhost:9200',
+      indexPrefix: 'integration-'
     }
   })
 
 module.exports = {
   database: config.get('database'),
   debug: config.get('debug'),
-  sites: config.get('sites')
+  sites: config.get('sites'),
+  elastic: nconf.get('elastic')
 }

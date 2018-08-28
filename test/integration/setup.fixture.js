@@ -15,7 +15,11 @@ const {
     port,
     database
   },
-  debug
+  debug,
+  elastic: {
+    host: elasticHost,
+    indexPrefix
+  }
 } = require('./config')
 
 const dbURL = `postgres://${user}:${password}@${host}:${port}`
@@ -80,6 +84,26 @@ describe('setup', () => {
       args: ['up', '-m', './test/integration/migrations', '-t', 'pgmigrations-integrations'],
       ignoreIfNotExist: 'test/integration/migrations'
     }))
+
+  it('creates the elastic indices', async () => {
+    return new Promise((resolve, reject) => {
+      const migrate = spawn('bin/elastic-migrate', ['up', 'integration'], {
+        cwd: process.cwd(),
+        env: Object.assign({}, process.env, {
+          elastic__host: elasticHost,
+          elastic__indexPrefix: indexPrefix
+        })
+      })
+
+      if (debug) {
+        migrate.stdout.on('data', data => console.log(`${data}`))
+        migrate.stderr.on('data', data => console.error(`${data}`))
+      }
+
+      migrate.on('close', exitCode =>
+        exitCode !== 0 ? reject(exitCode) : resolve(exitCode))
+    })
+  })
 
   it('starts global.API', () => {
     const env = Object.assign({}, process.env, {
