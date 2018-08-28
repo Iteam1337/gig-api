@@ -7,12 +7,25 @@ const reqdir = require('require-dir')
 const { elastic: { host, indexPrefix } } = require('../lib/config')
 
 const INDEX = `${indexPrefix}migrations`
-
 const TYPE = 'migration'
 const CWD = `${process.cwd()}`.replace(/\/bin(\/)?$/i, '')
 const MIGRATIONS_DIR = `${CWD}/elastic-migrations`
 
-async function checkIndex (client) {
+let client // GLOBAL CLIENT
+
+async function setGlobalClient () {
+  client = new Client({ host })
+
+  const ok = await checkIndex()
+
+  if (!ok) {
+    return process.exit(1)
+  }
+
+  return ok
+}
+
+async function checkIndex () {
   const exists = await client.indices.exists({ index: INDEX })
 
   if (exists) {
@@ -23,7 +36,7 @@ async function checkIndex (client) {
 
   try {
     const { acknowledged } = await client.indices.create({
-      index:  INDEX,
+      index: INDEX,
       body: {
         settings: {
           index: { 'mapper.dynamic': false }
@@ -47,9 +60,9 @@ async function checkIndex (client) {
   return ok
 }
 
-async function last (client) {
+async function last () {
   try {
-    const { hits: { hits: [ { _id: id, _source: last } ] } } = await client.search({
+    const { hits: { hits: [{ _id: id, _source: last }] } } = await client.search({
       index: INDEX,
       type: TYPE,
       body: {
@@ -66,11 +79,11 @@ async function last (client) {
 
     return Object.assign({ filename: id }, last)
   } catch (error) {
-    return { filename: '', date:  0, name: '' }
+    return { filename: '', date: 0, name: '' }
   }
 }
 
-function saveJob ({ client, date, name, filename }) {
+function saveJob ({ date, name, filename }) {
   return client.create({
     index: INDEX,
     type: TYPE,
@@ -82,7 +95,7 @@ function saveJob ({ client, date, name, filename }) {
   })
 }
 
-function removeJob ({ client, filename }) {
+function removeJob ({ filename }) {
   return client.delete({
     index: INDEX,
     type: TYPE,
@@ -90,28 +103,28 @@ function removeJob ({ client, filename }) {
   })
 }
 
-async function up ({ client, migrations, lastDocument }) {
+async function up ({ migrations, lastDocument }) {
   const keys = Object
     .keys(migrations)
     .reduce((array, filename) => {
-      const [ date, name ] = filename.split('_')
+      const [date, name] = filename.split('_')
       if (!date || !name) {
         return array
       }
-      array.push([ Number.parseInt(date, 10) || 0, name, filename ])
+      array.push([Number.parseInt(date, 10) || 0, name, filename])
       return array
     }, [])
-    .sort(([ aDate ], [ bDate ]) =>
+    .sort(([aDate], [bDate]) =>
       aDate > bDate ? 1 : aDate < bDate ? -1 : 0)
-    .filter(([ date ]) => date > lastDocument.date)
+    .filter(([date]) => date > lastDocument.date)
 
   if (!keys.length) {
     return console.log(`No migrations`)
   }
 
-  console.log(`> Migrating files:\n${keys.map(([ _date, _name, filename ]) => `\n> - ${filename}`)}`)
+  console.log(`> Migrating files:\n${keys.map(([_date, _name, filename]) => `\n> - ${filename}`)}`)
 
-  await Promise.all(keys.map(async ([ date, name, filename ]) => {
+  await Promise.all(keys.map(async ([date, name, filename]) => {
     const dir = migrations[filename]['up']
 
     if (dir && typeof dir === 'function') {
@@ -123,13 +136,13 @@ async function up ({ client, migrations, lastDocument }) {
       }
     }
 
-    await saveJob({ client, date, name, filename })
+    await saveJob({ date, name, filename })
 
     console.log(`\n### MIGRATION ${filename} (UP) ###\n\n`, dir)
   }))
 }
 
-async function down ({ client, migrations, lastDocument: { filename } }) {
+async function down ({ migrations, lastDocument: { filename } }) {
   const dir = migrations[filename]['down']
 
   console.log(`> Migrating files:\n\n> - ${filename}`)
@@ -143,34 +156,23 @@ async function down ({ client, migrations, lastDocument: { filename } }) {
     }
   }
 
-  await removeJob({ client, filename })
+  await removeJob({ filename })
 
   console.log(`\n### MIGRATION ${filename} (DOWN) ###\n\n`, dir)
 }
 
 async function migrate (direction = 'up', paths) {
-  const client = new Client({ host })
-
-  const ok = await checkIndex(client)
-
-  if (!ok) {
-    return process.exit(1)
-  }
-
-  const lastDocument = await last(client)
-  const migrations = paths
-    .reduce((paths, path) =>
-      Object.assign(paths, reqdir(path)), {})
+  const lastDocument = await last()
+  const migrations = paths.reduce((paths, path) =>
+    Object.assign(paths, reqdir(path)), {})
 
   if (direction === 'up') {
     await up({
-      client,
       migrations,
       lastDocument
     })
   } else if (lastDocument.date !== 0) {
     await down({
-      client,
       migrations,
       lastDocument
     })
@@ -206,6 +208,7 @@ async function main () {
       paths.push(`${CWD}/test/integration/elastic-migrations`)
     }
 
+    await setGlobalClient()
     await migrate(direction, paths)
     console.log('Elasticsearch migrations complete!')
   } else if (argsString.startsWith('create')) {
