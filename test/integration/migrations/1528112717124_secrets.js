@@ -1,6 +1,8 @@
 
 const { sites } = require('../config')
 
+console.log({ sites })
+
 exports.up = pgm => {
   pgm.sql(`
     DELETE FROM allowed_clients;

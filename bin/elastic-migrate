@@ -10,6 +10,7 @@ const INDEX = `${indexPrefix}migrations`
 const TYPE = 'migration'
 const CWD = `${process.cwd()}`.replace(/\/bin(\/)?$/i, '')
 const MIGRATIONS_DIR = `${CWD}/elastic-migrations`
+const INTEGRATION_MIGRATIONS_DIR = `${CWD}/test/integration/elastic-migrations`
 
 let client // GLOBAL CLIENT
 
@@ -180,13 +181,13 @@ async function migrate (direction = 'up', paths) {
   }
 }
 
-async function create (name = '') {
+async function create (name = '', dir = `${MIGRATIONS_DIR}`) {
   if (!name) {
     return process.exit(1)
   }
 
   const filename = `${Date.now()}_${name}.js`
-  const path = `${MIGRATIONS_DIR}/${filename}`
+  const path = `${dir}/${filename}`
 
   console.log(`Create elasticsearch migration ${path}`)
 
@@ -195,25 +196,23 @@ async function create (name = '') {
 
 async function main () {
   const argsSlice = process.argv.slice(2).length ? process.argv.slice(2) : ['up']
-  const argsString = argsSlice.join(' ').toLowerCase()
   const paths = [MIGRATIONS_DIR]
+  const integration = argsSlice.includes('integration')
 
-  const direction = argsString.startsWith('up')
-    ? 'up'
-    : argsString.startsWith('down')
-      ? 'down'
-      : undefined
+  if (integration) {
+    argsSlice.splice(argsSlice.indexOf('integration'), 1)
+    paths.push(INTEGRATION_MIGRATIONS_DIR)
+  }
+
+  const command = `${argsSlice[0]}`.toLowerCase()
+  const direction = command.search(/^(up|down)$/) !== -1 ? command : false
 
   if (direction) {
-    if (argsString.endsWith('integration')) {
-      paths.push(`${CWD}/test/integration/elastic-migrations`)
-    }
-
     await setGlobalClient()
     await migrate(direction, paths)
     console.log('Elasticsearch migrations complete!')
-  } else if (argsString.startsWith('create')) {
-    await create(argsSlice[1])
+  } else if (command === 'create') {
+    await create(argsSlice[1], integration ? INTEGRATION_MIGRATIONS_DIR : MIGRATIONS_DIR)
   }
 
   process.exit(0)

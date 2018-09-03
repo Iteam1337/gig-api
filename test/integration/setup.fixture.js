@@ -12,6 +12,7 @@ const {
     database
   },
   debug,
+  defaults,
   elastic: {
     host: elasticHost,
     indexPrefix
@@ -33,7 +34,7 @@ function migrate ({ args = ['up'], ignoreIfNotExist = false }) {
         DATABASE_URL: `${dbURL}/${database}`,
         DATABASE_USER: user,
         DATABASE_PASSWORD: password
-      })
+      }, defaults)
     })
 
     if (debug) {
@@ -86,10 +87,7 @@ describe('setup', () => {
     return new Promise((resolve, reject) => {
       const migrate = spawn('bin/elastic-migrate', ['up', 'integration'], {
         cwd: process.cwd(),
-        env: Object.assign({}, process.env, {
-          elastic__host: elasticHost,
-          elastic__indexPrefix: indexPrefix
-        })
+        env: Object.assign({}, process.env, defaults)
       })
 
       if (debug) {
@@ -103,15 +101,7 @@ describe('setup', () => {
   })
 
   it('starts global.API', () => {
-    const env = Object.assign({}, process.env, {
-      database__user: user,
-      database__password: password,
-      database__host: host,
-      database__port: port,
-      database__database: database,
-      elastic__host: elasticHost,
-      elastic__indexPrefix: indexPrefix
-    })
+    const env = Object.assign({}, process.env, defaults)
 
     const api = spawn('node', ['lib/index', '--integration'], {
       cwd: process.cwd(),

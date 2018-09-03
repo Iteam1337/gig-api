@@ -1,5 +1,5 @@
 const rp = require('request-promise')
-const { port } = require(`${process.cwd()}/lib/config`)
+const { port } = require('../config')
 
 module.exports = async ({ path = '/', headers = {}, options = {} } = {}) => {
   const data = Object.assign(options, {
