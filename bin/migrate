@@ -24,10 +24,8 @@ if (integration) {
   args.splice(args.indexOf('integration'), 1)
   args.push('-m', `${cwd}/test/integration/migrations/posgres`)
 } else {
-  args.push('-m', `${cwd}/migrations/posgres`)
+  args.push('-m', `${cwd}/migrations/postgres`)
 }
-
-console.log(args)
 
 const migrate = spawn('node_modules/.bin/node-pg-migrate', args, {
   cwd, env
