@@ -1,7 +1,7 @@
 const { database: { database }, elastic: { indexPrefix } } = require('./config')
 const client = require('./helpers/psql')('postgres')
 const request = require('./helpers/request')
-const elasticClient = require('./helpers/elasticClient')
+const { client: elasticClient } = require('./helpers/elasticClient')
 
 function wait () {
   let maxRetries = 10
@@ -48,12 +48,10 @@ describe('teardown', () => {
     return client.end()
   })
 
-  xit('removes all indices', async () => {
-    const indices = ['migrations', 'jobs']
+  it('removes all indices', async () => {
+    const indices = ['migrations', 'jobs'].map(index => `${indexPrefix}${index}`)
 
-    await Promise.all(indices.map(async name => {
-      const index = `${indexPrefix}${name}`
-
+    await Promise.all(indices.map(async index => {
       const exists = await elasticClient.indices.exists({ index })
 
       if (exists) {

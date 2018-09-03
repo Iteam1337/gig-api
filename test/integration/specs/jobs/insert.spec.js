@@ -1,21 +1,27 @@
 const { expect } = require('chai')
-const { useFakeTimers } = require('sinon')
+const moment = require('moment')
+
 const request = require('../../helpers/request')
 const {
   sites: {
     gigstr: site
   }
 } = require('../../config')
-
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
+const { client: elasticClient, truncate: truncateElastic } = require('../../helpers/elasticClient')
 
 describe('jobs/insert', () => {
   let job, jobID, now
+  let client
 
-  before(() => {
-    now = useFakeTimers(Date.now())
+  before(async () => {
+    await truncateElastic()
 
+    client = psql()
+    await client.connect()
+
+    now = moment().toISOString()
     job = generateJob({
       company: site.name,
       source: site.name,
@@ -38,12 +44,6 @@ describe('jobs/insert', () => {
     })
 
     return true
-  })
-
-  let client
-  before(async () => {
-    client = psql()
-    await client.connect()
   })
 
   it('checks if there are any jobs in the database', async () => {
@@ -95,11 +95,11 @@ describe('jobs/insert', () => {
       path: '/jobs'
     })
 
-    expect([total, totalPages, currentPage]).to.eql([1, 1, 1])
+    expect([total, totalPages, currentPage], '[total, totalPages, currentPage]').to.eql([1, 1, 1])
 
     const [ result ] = results
 
-    expect(result).to.eql(Object.assign({}, job, { id: jobID }))
+    expect(result, 'result').to.eql(Object.assign({}, job, { id: jobID }))
   })
 
   it('can get the specific job', async () => {
@@ -111,11 +111,7 @@ describe('jobs/insert', () => {
   })
 
   it('does not re-add the same job twice', async () => {
-    const future = useFakeTimers(Date.now())
-
-    future.tick('52:00:00')
-
-    job.endDate = new Date(future.now).toISOString()
+    job.endDate = moment().add(52, 'hours').toISOString()
 
     const response = await request({
       path: '/jobs',
@@ -147,6 +143,7 @@ describe('jobs/insert', () => {
   })
 
   after(async () => {
+    await truncateElastic()
     await client.query(`TRUNCATE jobs CASCADE;`)
     await client.end()
   })
