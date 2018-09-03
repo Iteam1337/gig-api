@@ -1,5 +1,5 @@
 
-const { sites } = require('../config')
+const { sites } = require('../../config')
 
 exports.up = pgm => {
   pgm.sql(`

@@ -74,17 +74,29 @@ describe('setup', () => {
     return client.end()
   })
 
-  it('system migrations', () =>
-    migrate({ args: ['up'] }))
-
-  it('integration migrations', () =>
+  it('system (POSTGRES) migrations', () =>
     migrate({
-      args: ['up', '-m', './test/integration/migrations', '-t', 'pgmigrations-integrations'],
-      ignoreIfNotExist: 'test/integration/migrations'
+      args: [
+        'up',
+        '-m',
+        './migrations/postgres'
+      ]
     }))
 
-  it('creates the elastic indices', async () => {
-    return new Promise((resolve, reject) => {
+  it('integration (POSTGRES) migrations', () =>
+    migrate({
+      args: [
+        'up',
+        '-m',
+        './test/integration/migrations/postgres',
+        '-t',
+        'pgmigrations-integrations'
+      ],
+      ignoreIfNotExist: 'test/integration/migrations/postgres'
+    }))
+
+  it('creates the elastic indices', async () =>
+    new Promise((resolve, reject) => {
       const migrate = spawn('bin/elastic-migrate', ['up', 'integration'], {
         cwd: process.cwd(),
         env: Object.assign({}, process.env, defaults)
@@ -97,8 +109,7 @@ describe('setup', () => {
 
       migrate.on('close', exitCode =>
         exitCode !== 0 ? reject(exitCode) : resolve(exitCode))
-    })
-  })
+    }))
 
   it('starts global.API', () => {
     const env = Object.assign({}, process.env, defaults)

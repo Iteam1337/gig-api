@@ -9,8 +9,8 @@ const { elastic: { host, indexPrefix } } = require('../lib/config')
 const INDEX = `${indexPrefix}migrations`
 const TYPE = 'migration'
 const CWD = `${process.cwd()}`.replace(/\/bin(\/)?$/i, '')
-const MIGRATIONS_DIR = `${CWD}/elastic-migrations`
-const INTEGRATION_MIGRATIONS_DIR = `${CWD}/test/integration/elastic-migrations`
+const MIGRATIONS_DIR = `${CWD}/migrations/elastic`
+const INTEGRATION_MIGRATIONS_DIR = `${CWD}/test/integration/migrations/elastic`
 
 let client // GLOBAL CLIENT
 
