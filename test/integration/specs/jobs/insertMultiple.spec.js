@@ -136,12 +136,6 @@ describe('jobs/insertMultiple', () => {
 
       const [ first, second, third ] = results
 
-      console.log([
-        [first.latitude, first.longitude, jobs[0].latitude, jobs[0].longitude],
-        [second.latitude, second.longitude, jobs[2].latitude, jobs[2].longitude],
-        [third.latitude, third.longitude, jobs[1].latitude, jobs[1].longitude],
-      ])
-
       expect([
         first.sourceId,
         second.sourceId,
