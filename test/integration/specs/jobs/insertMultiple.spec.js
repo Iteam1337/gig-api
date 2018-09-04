@@ -108,8 +108,6 @@ describe('jobs/insertMultiple', () => {
         path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1`
       })
 
-      console.log(res.results, { lat: expected.latitude, lon: expected.longitude })
-
       const { results: [ { sourceId } ] } = res
 
       expect(sourceId).to.eql(expected.sourceId)
@@ -128,11 +126,21 @@ describe('jobs/insertMultiple', () => {
 
       await post(jobs)
 
+      const experience = '4.4.1'
+      const orderBy = 'relevance'
+      const pageLimit = 3
+
       const { results } = await request({
-        path: `/jobs?longitude=${longitude}&latitude=${latitude}&experience=4.4.1&orderBy=relevance&pageLimit=5`
+        path: `/jobs?longitude=${longitude}&latitude=${latitude}&experience=${experience}&orderBy=${orderBy}&pageLimit=${pageLimit}`
       })
 
       const [ first, second, third ] = results
+
+      console.log([
+        [first.latitude, first.longitude, jobs[0].latitude, jobs[0].longitude],
+        [second.latitude, second.longitude, jobs[2].latitude, jobs[2].longitude],
+        [third.latitude, third.longitude, jobs[1].latitude, jobs[1].longitude],
+      ])
 
       expect([
         first.sourceId,

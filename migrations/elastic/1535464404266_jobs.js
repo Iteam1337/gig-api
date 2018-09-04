@@ -40,10 +40,10 @@ exports.up = async client => {
             payment_type: { type: 'text' },
             currency: { type: 'text' },
             language: { type: 'text' },
-            experience: { type: 'text' },
-            skills: { type: 'text' },
-            education: { type: 'text' },
-            language_skills: { type: 'text' }
+            experience: { type: 'text', fielddata: true },
+            skills: { type: 'text', fielddata: true },
+            education: { type: 'text', fielddata: true },
+            language_skills: { type: 'text', fielddata: true }
           }
         }
       }
