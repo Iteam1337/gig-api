@@ -108,6 +108,8 @@ describe('jobs/insertMultiple', () => {
         path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1`
       })
 
+      console.log(res.results, { lat: expected.latitude, lon: expected.longitude })
+
       const { results: [ { sourceId } ] } = res
 
       expect(sourceId).to.eql(expected.sourceId)
