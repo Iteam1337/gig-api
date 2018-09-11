@@ -110,7 +110,7 @@ describe('jobs/insert', () => {
     expect(id).to.eql(jobID)
   })
 
-  it('does not re-add the same job twice', async () => {
+  it('updates successfully if re-adding', async () => {
     job.endDate = moment().add(52, 'hours').toISOString()
 
     const response = await request({
@@ -125,15 +125,11 @@ describe('jobs/insert', () => {
       }
     })
 
-    expect(response).to.have.all.keys('total', 'successful', 'failed', 'results')
+    expect(response, 'response to look a specific way').to.have.all.keys('total', 'successful', 'failed', 'results')
 
-    const { results, total, failed, successful } = response
+    const { total, failed, successful } = response
 
-    expect([total, failed, successful]).to.eql([1, 1, 0])
-
-    const { failed: [ { sourceId } ] } = results
-
-    expect(sourceId).to.eql(job.sourceId)
+    expect([total, failed, successful], '[total, failed, successful]').to.eql([1, 0, 1])
   })
 
   it('checks if the job got stuck in database', async () => {
