@@ -33,10 +33,15 @@
     ]
   },
   "dependencies": {
+    "bodybuilder": "^2.2.15",
     "camelcase-keys": "4.2.0",
     "cors": "2.8.4",
     "elasticsearch": "15.1.1",
     "graphql-request": "1.6.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.isempty": "^4.4.0",
+    "lodash.merge": "^4.6.1",
+    "lodash.set": "^4.3.2",
     "moment": "^2.22.2",
     "nconf": "0.10.0",
     "node-pg-migrate": "3.3.0",
