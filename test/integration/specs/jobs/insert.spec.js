@@ -9,7 +9,7 @@ const {
 } = require('../../config')
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
-const { client: elasticClient, truncate: truncateElastic } = require('../../helpers/elasticClient')
+const { truncate: truncateElastic } = require('../../helpers/elasticClient')
 
 describe('jobs/insert', () => {
   let job, jobID, now

@@ -7,20 +7,16 @@
     "dev": "npm run migrate && nodemon lib/index",
     "start": "npm run migrate && npm run start:server",
     "start:server": "node ./lib/index.js",
-
     "migrate": "bin/migrate up && bin/elastic-migrate up",
     "migrate:down": "bin/migrate down && bin/elastic-migrate down",
     "migrate:create": "echo 'There are two migrations, elasticsearch and postgres\n  \"npm run migrate:elastic:create\"\n  \"npm run migrate:postgres:create\"'",
     "migrate:integration": "bin/migrate integration",
-
     "migrate:elastic:up": "bin/elastic-migrate up",
     "migrate:elastic:down": "bin/elastic-migrate down",
     "migrate:elastic:create": "bin/elastic-migrate create",
-
     "migrate:postgres:up": "bin/migrate up",
     "migrate:postgres:down": "bin/migrate down",
     "migrate:postgres:create": "bin/migrate create",
-
     "test": "mocha test/{unit/**,unit}/*.spec.js",
     "test:watch": "mocha mocha test/{unit/**,unit}/*.spec.js --reporter spec --recursive --watch",
     "test:integration": "bin/kill-process && mocha test/integration/setup.fixture.js test/integration/{specs,specs/**}/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
