@@ -104,13 +104,18 @@ describe('jobs/insertMultiple', () => {
     })
 
     it('gets the job closest to location', async () => {
+      const pageLimit = 1
       const res = await request({
-        path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=1`
+        path: `/jobs?longitude=${expected.longitude}&latitude=${expected.latitude}&pageLimit=${pageLimit}`
       })
 
-      const { results: [ { sourceId } ] } = res
+      const { results } = res
 
-      expect(sourceId).to.eql(expected.sourceId)
+      expect(results, 'number of results').to.have.lengthOf(pageLimit)
+
+      const [ { sourceId } ] = results
+
+      expect(sourceId, 'expected source id').to.eql(expected.sourceId)
     })
 
     it('gets the job closest to location AND respects the experience parameter', async () => {
@@ -134,13 +139,15 @@ describe('jobs/insertMultiple', () => {
         path: `/jobs?longitude=${longitude}&latitude=${latitude}&experience=${experience}&orderBy=${orderBy}&pageLimit=${pageLimit}`
       })
 
+      expect(results, 'number of results').to.have.lengthOf(pageLimit)
+
       const [ first, second, third ] = results
 
       expect([
         first.sourceId,
         second.sourceId,
         third.sourceId
-      ]).to.eql([
+      ], 'match the expected source ids').to.eql([
         jobs[0].sourceId,
         jobs[2].sourceId,
         jobs[1].sourceId
