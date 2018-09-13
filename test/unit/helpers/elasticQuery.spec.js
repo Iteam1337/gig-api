@@ -1,15 +1,15 @@
 const { expect } = require('chai')
 const proxyquire = require('proxyquire')
 
-describe('adapters/elasticQuery', () => {
+describe('helpers/elasticQuery', () => {
   let elasticQuery, elasticAdapter
   beforeEach(() => {
     elasticAdapter = {
       indexPrefix: 'foo'
     }
 
-    elasticQuery = proxyquire(`${process.cwd()}/lib/adapters/elasticQuery`, {
-      './elastic': elasticAdapter
+    elasticQuery = proxyquire(`${process.cwd()}/lib/helpers/elasticQuery`, {
+      '../adapters/elastic': elasticAdapter
     })
   })
 
