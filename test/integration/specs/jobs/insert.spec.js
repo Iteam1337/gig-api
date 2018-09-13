@@ -153,7 +153,7 @@ describe('jobs/insert', () => {
 
     await postJob(job)
 
-    const { results: initialResponse } = await request({ path: '/jobs?debug' })
+    const { results: initialResponse } = await request({ path: '/jobs' })
     expect(initialResponse, 'check length of initial response').to.have.lengthOf(1)
 
     const [ { endDate } ] = initialResponse
@@ -162,7 +162,7 @@ describe('jobs/insert', () => {
     job.endDate = expectedDateAfterModified
     await postJob(job)
 
-    const { results: afterModified } = await request({ path: '/jobs?debug' })
+    const { results: afterModified } = await request({ path: '/jobs' })
     expect(afterModified).to.have.lengthOf(1)
 
     const [ { endDate: endDateAfterModified } ] = afterModified
