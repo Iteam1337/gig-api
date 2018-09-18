@@ -67,6 +67,14 @@ async function last () {
       index: INDEX,
       type: TYPE,
       body: {
+        query: {
+          match_all: {}
+        },
+        sort: {
+          date: {
+            order: 'desc'
+          }
+        },
         aggs: {
           date: {
             max: {
