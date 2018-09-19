@@ -17,18 +17,33 @@ exports.up = async client => {
   })
 }
 
+
+
 exports.down = async client => {
+  async function getAll () {
+    const size = 1000 // max-size.
+
+    let done = false, from = 0, docs = []
+
+    do {
+      const { hits: { total, hits } } = await client.search({ index, type, from, size, body: { query: { match_all: {} } } })
+
+      docs = docs.concat(hits)
+      done = from + size > total
+
+      if (!done) {
+        from += size
+      }
+    } while (!done)
+
+    return docs
+  }
+
   const index = `${client.indexPrefix}${indexSuffix}`
 
   const { [index]: { mappings } } = await client.indices.getMapping({ index})
   const { [index]: { settings: { index: { mapper } } } } = await client.indices.getSettings({ index })
-
-  const { hits: { hits } } = await client.search({
-    index,
-    type,
-    size: 10000, // max-size.
-    body: { query: { match_all: {} } }
-  })
+  const hits = await getAll(index)
 
   await client.indices.delete({ index })
 
