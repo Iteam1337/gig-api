@@ -2,3 +2,46 @@
 global.chai = require('chai')
 global.chai.use(require('sinon-chai'))
 global.chai.use(require('chai-uuid'))
+
+const { stub, spy } = require('sinon')
+
+{
+  const lib = require('elasticsearch')
+  Object.assign(lib, {
+    Client: stub()
+  })
+}
+
+{
+  const lib = require('graphql-request')
+  Object.assign(lib, {
+    GraphQLClient: stub().resolves({})
+  })
+}
+
+{
+  const lib = require('simple-pg')
+  const transaction = {
+    isert: stub().resolves(),
+    any: stub().resolves(),
+    manyOrNone: stub().resolves(),
+    one: stub().resolves(),
+    none: stub().resolves(),
+    batch: spy(calls => Promise.all(calls))
+  }
+
+  const db = {
+    tx: spy(f => f(transaction)),
+    query: stub().resolves(),
+    isert: stub().resolves(),
+    any: stub().resolves(),
+    manyOrNone: stub().resolves(),
+    one: stub().resolves(),
+    none: stub().resolves(),
+    connect: stub().resolves()
+  }
+
+  Object.assign(db, stub().returns(db))
+
+  Object.assign(lib, stub().returns(db))
+}
