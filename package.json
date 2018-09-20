@@ -7,6 +7,7 @@
     "dev": "npm run migrate && nodemon lib/index",
     "start": "npm run migrate && npm run start:server",
     "start:server": "node ./lib/index.js",
+    "lint": "eslint 'lib/**/*.js'",
     "migrate": "bin/migrate up && bin/elastic-migrate up",
     "migrate:down": "bin/migrate down && bin/elastic-migrate down",
     "migrate:create": "echo 'There are two migrations, elasticsearch and postgres\n  \"npm run migrate:elastic:create\"\n  \"npm run migrate:postgres:create\"'",
@@ -17,9 +18,9 @@
     "migrate:postgres:up": "bin/migrate up",
     "migrate:postgres:down": "bin/migrate down",
     "migrate:postgres:create": "bin/migrate create",
-    "test": "mocha test/{unit/**,unit}/*.spec.js",
+    "test": "npm run lint && mocha test/{unit,unit/**,unit/**/**}/*.spec.js --recursive",
     "test:watch": "mocha mocha test/{unit,unit/**,unit/**/**}/*.spec.js --reporter spec --recursive --watch",
-    "test:integration": "bin/kill-process && mocha test/integration/setup.fixture.js test/integration/{specs,specs/**}/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
+    "test:integration": "bin/kill-process && mocha test/integration/setup.fixture.js test/integration/{specs,specs/**,,specs/**/**}/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,12 @@
     "chai-uuid": "^1.0.6",
     "chalk": "^2.4.1",
     "dot-object": "^1.7.0",
+    "eslint": "^5.6.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
     "proxyquire": "^2.0.1",
