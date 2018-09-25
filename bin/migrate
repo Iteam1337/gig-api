@@ -21,8 +21,10 @@ let args = process.argv.slice(2).length ? process.argv.slice(2) : ['up']
 let integration = args.includes('integration')
 
 if (integration) {
-  args = args.map(arg => arg === 'integration' ? 'create' : arg)
-  args.push('-m', `${cwd}/test/integration/migrations`)
+  args.splice(args.indexOf('integration'), 1)
+  args.push('-m', `${cwd}/test/integration/migrations/postgres`)
+} else if (args.includes('-m') === false) {
+  args.push('-m', `${cwd}/migrations/postgres`)
 }
 
 const migrate = spawn('node_modules/.bin/node-pg-migrate', args, {

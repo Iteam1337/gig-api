@@ -2,11 +2,7 @@ const { spawn } = require('child_process')
 const { existsSync } = require('fs')
 const chalk = require('chalk')
 
-const log = chalk.keyword('grey')
-const err = chalk.keyword('white')
-
 const client = require('./helpers/psql')('postgres')
-
 const {
   database: {
     user,
@@ -15,9 +11,15 @@ const {
     port,
     database
   },
-  debug
+  debug,
+  defaults,
+  elastic: {
+    host: elasticHost,
+    indexPrefix
+  }
 } = require('./config')
 
+const [log, err] = [chalk.keyword('grey'), chalk.keyword('white')]
 const dbURL = `postgres://${user}:${password}@${host}:${port}`
 
 function migrate ({ args = ['up'], ignoreIfNotExist = false }) {
@@ -32,7 +34,7 @@ function migrate ({ args = ['up'], ignoreIfNotExist = false }) {
         DATABASE_URL: `${dbURL}/${database}`,
         DATABASE_USER: user,
         DATABASE_PASSWORD: password
-      })
+      }, defaults)
     })
 
     if (debug) {
@@ -72,23 +74,45 @@ describe('setup', () => {
     return client.end()
   })
 
-  it('system migrations', () =>
-    migrate({ args: ['up'] }))
-
-  it('integration migrations', () =>
+  it('system (POSTGRES) migrations', () =>
     migrate({
-      args: ['up', '-m', './test/integration/migrations', '-t', 'pgmigrations-integrations'],
-      ignoreIfNotExist: 'test/integration/migrations'
+      args: [
+        'up',
+        '-m',
+        './migrations/postgres'
+      ]
+    }))
+
+  it('integration (POSTGRES) migrations', () =>
+    migrate({
+      args: [
+        'up',
+        '-m',
+        './test/integration/migrations/postgres',
+        '-t',
+        'pgmigrations-integrations'
+      ],
+      ignoreIfNotExist: 'test/integration/migrations/postgres'
+    }))
+
+  it('creates the elastic indices', async () =>
+    new Promise((resolve, reject) => {
+      const migrate = spawn('bin/elastic-migrate', ['up', 'integration'], {
+        cwd: process.cwd(),
+        env: Object.assign({}, process.env, defaults)
+      })
+
+      if (debug) {
+        migrate.stdout.on('data', data => console.log(`${data}`))
+        migrate.stderr.on('data', data => console.error(`${data}`))
+      }
+
+      migrate.on('close', exitCode =>
+        exitCode !== 0 ? reject(exitCode) : resolve(exitCode))
     }))
 
   it('starts global.API', () => {
-    const env = Object.assign({}, process.env, {
-      DATABASE__USER: user,
-      DATABASE__PASSWORD: password,
-      DATABASE__HOST: host,
-      DATABASE__PORT: port,
-      DATABASE__DATABASE: database
-    })
+    const env = Object.assign({}, process.env, defaults)
 
     const api = spawn('node', ['lib/index', '--integration'], {
       cwd: process.cwd(),

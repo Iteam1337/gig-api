@@ -1,9 +1,9 @@
 const nconf = require('nconf')
+const Dot = require('dot-object')
 
 const config = nconf
   .env({
-    separator: '__',
-    lowerCase: true
+    separator: '__'
   })
   .file({
     file: 'config-integration.json',
@@ -19,6 +19,7 @@ const config = nconf
       port: 5432
     },
     debug: false,
+    port: 4005,
     sites: {
       gigstr: {
         id: '85d5cfcb-37bd-4a54-9410-2aa1cc52ea6d',
@@ -35,11 +36,21 @@ const config = nconf
         secret: 'b320b8dd-e0be-42cb-a158-48a54d7d30bd',
         name: 'taskrunner'
       }
+    },
+    elastic: {
+      host: 'localhost:9200',
+      indexPrefix: 'integration-'
     }
   })
 
+const combined = Object.assign({}, config.stores.defaults.store, config.stores.file.store)
+const dotObject = new Dot('__').dot(combined)
+
 module.exports = {
+  defaults: dotObject,
+  port: config.get('port'),
   database: config.get('database'),
   debug: config.get('debug'),
-  sites: config.get('sites')
+  sites: config.get('sites'),
+  elastic: nconf.get('elastic')
 }

@@ -1,0 +1,221 @@
+#!/usr/bin/env node
+const { writeFileSync } = require('fs')
+
+const { Client } = require('elasticsearch')
+const reqdir = require('require-dir')
+
+const { elastic: { host, indexPrefix } } = require('../lib/config')
+
+const INDEX = `${indexPrefix}migrations`
+const TYPE = 'migration'
+const CWD = `${process.cwd()}`.replace(/\/bin(\/)?$/i, '')
+const MIGRATIONS_DIR = `${CWD}/migrations/elastic`
+const INTEGRATION_MIGRATIONS_DIR = `${CWD}/test/integration/migrations/elastic`
+
+let client // GLOBAL CLIENT
+
+async function setGlobalClient () {
+  client = Object.assign(new Client({ host }), { indexPrefix })
+
+  const ok = await checkIndex()
+
+  if (!ok) {
+    return process.exit(1)
+  }
+
+  return ok
+}
+
+async function checkIndex () {
+  const exists = await client.indices.exists({ index: INDEX })
+
+  if (exists) {
+    return true
+  }
+
+  let ok = false
+
+  try {
+    const { acknowledged } = await client.indices.create({
+      index: INDEX,
+      body: {
+        settings: {
+          index: { 'mapper.dynamic': false }
+        },
+        mappings: {
+          [TYPE]: {
+            dynamic: 'strict',
+            properties: {
+              date: { type: 'long' },
+              name: { type: 'text' }
+            }
+          }
+        }
+      }
+    })
+    ok = acknowledged
+  } catch (error) {
+    console.log(error)
+  }
+
+  return ok
+}
+
+async function last () {
+  try {
+    const { hits: { hits: [{ _id: id, _source: last }] } } = await client.search({
+      index: INDEX,
+      type: TYPE,
+      body: {
+        aggs: {
+          date: {
+            max: {
+              field: 'date'
+            }
+          }
+        },
+        from: 0,
+        size: 1
+      }
+    })
+
+    return Object.assign({ filename: id }, last)
+  } catch (error) {
+    return { filename: '', date: 0, name: '' }
+  }
+}
+
+function saveJob ({ date, name, filename }) {
+  return client.create({
+    index: INDEX,
+    type: TYPE,
+    id: filename,
+    body: {
+      date,
+      name
+    }
+  })
+}
+
+function removeJob ({ filename }) {
+  return client.delete({
+    index: INDEX,
+    type: TYPE,
+    id: filename
+  })
+}
+
+async function up ({ migrations, lastDocument }) {
+  const keys = Object
+    .keys(migrations)
+    .reduce((array, filename) => {
+      const [date, name] = filename.split('_')
+      if (!date || !name) {
+        return array
+      }
+      array.push([Number.parseInt(date, 10) || 0, name, filename])
+      return array
+    }, [])
+    .sort(([aDate], [bDate]) =>
+      aDate > bDate ? 1 : aDate < bDate ? -1 : 0)
+    .filter(([date]) => date > lastDocument.date)
+
+  if (!keys.length) {
+    return console.log(`No migrations`)
+  }
+
+  console.log(`> Migrating files:\n${keys.map(([_date, _name, filename]) => `\n> - ${filename}`)}`)
+
+  await Promise.all(keys.map(async ([date, name, filename]) => {
+    const dir = migrations[filename]['up']
+
+    if (dir && typeof dir === 'function') {
+      try {
+        await dir(client)
+      } catch (error) {
+        console.error(error)
+        process.exit(1)
+      }
+    }
+
+    await saveJob({ date, name, filename })
+
+    console.log(`\n### MIGRATION ${filename} (UP) ###\n\n`, dir)
+  }))
+}
+
+async function down ({ migrations, lastDocument: { filename } }) {
+  const dir = migrations[filename]['down']
+
+  console.log(`> Migrating files:\n\n> - ${filename}`)
+
+  if (dir && typeof dir === 'function') {
+    try {
+      await dir(client)
+    } catch (error) {
+      console.error(error)
+      process.exit(1)
+    }
+  }
+
+  await removeJob({ filename })
+
+  console.log(`\n### MIGRATION ${filename} (DOWN) ###\n\n`, dir)
+}
+
+async function migrate (direction = 'up', paths) {
+  const lastDocument = await last()
+  const migrations = paths.reduce((paths, path) =>
+    Object.assign(paths, reqdir(path)), {})
+
+  if (direction === 'up') {
+    await up({
+      migrations,
+      lastDocument
+    })
+  } else if (lastDocument.date !== 0) {
+    await down({
+      migrations,
+      lastDocument
+    })
+  }
+}
+
+async function create (name = '', dir = `${MIGRATIONS_DIR}`) {
+  if (!name) {
+    return process.exit(1)
+  }
+
+  const filename = `${Date.now()}_${name}.js`
+  const path = `${dir}/${filename}`
+
+  console.log(`Create elasticsearch migration ${path}`)
+
+  writeFileSync(path, `exports.up = async _client => {}\n\nexports.down = async _client => {}\n`)
+}
+
+async function main () {
+  const argsSlice = process.argv.slice(2).length ? process.argv.slice(2) : ['up']
+  const paths = [MIGRATIONS_DIR]
+  const integration = argsSlice.includes('integration')
+
+  if (integration) {
+    argsSlice.splice(argsSlice.indexOf('integration'), 1)
+    paths.push(INTEGRATION_MIGRATIONS_DIR)
+  }
+
+  const command = `${argsSlice[0]}`.toLowerCase()
+  const direction = command.search(/^(up|down)$/) !== -1 ? command : false
+
+  if (direction) {
+    await setGlobalClient()
+    await migrate(direction, paths)
+    console.log('Elasticsearch migrations complete!')
+  } else if (command === 'create') {
+    await create(argsSlice[1], integration ? INTEGRATION_MIGRATIONS_DIR : MIGRATIONS_DIR)
+  }
+
+  process.exit(0)
+}
+
+main()

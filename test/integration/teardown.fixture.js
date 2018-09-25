@@ -1,6 +1,7 @@
-const { database: { database } } = require('./config')
+const { database: { database }, elastic: { indexPrefix } } = require('./config')
 const client = require('./helpers/psql')('postgres')
 const request = require('./helpers/request')
+const { client: elasticClient } = require('./helpers/elasticClient')
 
 function wait () {
   let maxRetries = 10
@@ -45,6 +46,18 @@ describe('teardown', () => {
     await client.query(`DROP DATABASE "${database}";`)
 
     return client.end()
+  })
+
+  it('removes all indices', async () => {
+    const indices = ['migrations', 'jobs'].map(index => `${indexPrefix}${index}`)
+
+    await Promise.all(indices.map(async index => {
+      const exists = await elasticClient.indices.exists({ index })
+
+      if (exists) {
+        await elasticClient.indices.delete({ index })
+      }
+    }))
   })
 
   it('kills global.API', async () => {

@@ -1,4 +1,4 @@
-const { useFakeTimers } = require('sinon')
+const moment = require('moment')
 const uuid = require('uuid/v4')
 
 module.exports = ({
@@ -21,11 +21,11 @@ module.exports = ({
   paymentType = 'hourly',
   address = 'Östermalmsgatan 26A, 114 26 Stockholm'
 }) => {
-  from = useFakeTimers(from && from.now || Date.now())
+  from = moment(from && from.now ? from.now : Date.now())
 
-  const to = useFakeTimers(Date.now(from.now))
+  const to = moment(from.now).add(48, 'hours').toISOString()
 
-  to.tick('48:00:00')
+  from = from.toISOString()
 
   return {
     sourceId: sourceId || uuid(),
@@ -46,10 +46,10 @@ module.exports = ({
     skills,
     education,
     languageSkills,
-    createdAt: new Date(from.now).toISOString(),
-    startDate: new Date(from.now).toISOString(),
-    endDate: new Date(to.now).toISOString(),
-    listedDate: new Date(from.now).toISOString(),
+    createdAt: from,
+    startDate: from,
+    endDate: to,
+    listedDate: from,
     link: 'http://foo.bar',
     contact: 'mail@dennispettersson.se',
     entryBy: 'integration'
