@@ -18,7 +18,7 @@
     "migrate:postgres:down": "bin/migrate down",
     "migrate:postgres:create": "bin/migrate create",
     "test": "mocha test/{unit/**,unit}/*.spec.js",
-    "test:watch": "mocha mocha test/{unit/**,unit}/*.spec.js --reporter spec --recursive --watch",
+    "test:watch": "mocha mocha test/{unit,unit/**,unit/**/**}/*.spec.js --reporter spec --recursive --watch",
     "test:integration": "bin/kill-process && mocha test/integration/setup.fixture.js test/integration/{specs,specs/**}/*.spec.js test/integration/teardown.fixture.js --opts test/integration/mocha.opts"
   },
   "repository": {
@@ -55,6 +55,7 @@
     "path": "0.12.7",
     "require-dir": "1.0.0",
     "restify": "7.2.0",
+    "restify-errors": "^6.1.1",
     "simple-pg": "1.0.0",
     "snakecase-keys": "1.1.1",
     "striptags": "3.1.1"
