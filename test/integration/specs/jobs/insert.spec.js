@@ -9,7 +9,7 @@ const {
 } = require('../../config')
 const psql = require('../../helpers/psql')
 const generateJob = require('../../helpers/generateJob')
-const { client: elasticClient, truncate: truncateElastic } = require('../../helpers/elasticClient')
+const { truncate: truncateElastic } = require('../../helpers/elasticClient')
 
 describe('jobs/insert', () => {
   let job, jobID, now
@@ -110,10 +110,8 @@ describe('jobs/insert', () => {
     expect(id).to.eql(jobID)
   })
 
-  it('does not re-add the same job twice', async () => {
-    job.endDate = moment().add(52, 'hours').toISOString()
-
-    const response = await request({
+  function postJob (job) {
+    return request({
       path: '/jobs',
       headers: {
         'client-id': site.id,
@@ -124,22 +122,52 @@ describe('jobs/insert', () => {
         body: job
       }
     })
+  }
 
-    expect(response).to.have.all.keys('total', 'successful', 'failed', 'results')
+  it('updates successfully if re-adding', async () => {
+    job.endDate = moment().add(52, 'hours').toISOString()
 
-    const { results, total, failed, successful } = response
+    const response = await postJob(job)
 
-    expect([total, failed, successful]).to.eql([1, 1, 0])
+    expect(response, 'response to look a specific way').to.have.all.keys('total', 'successful', 'failed', 'results')
 
-    const { failed: [ { sourceId } ] } = results
+    const { total, failed, successful } = response
 
-    expect(sourceId).to.eql(job.sourceId)
+    expect([total, failed, successful], '[total, failed, successful]').to.eql([1, 0, 1])
   })
 
   it('checks if the job got stuck in database', async () => {
     const { rows: [ row ], rowCount } = await client.query(`SELECT * FROM jobs;`)
     expect(rowCount).to.eql(1)
     expect(row.source_id).to.eql(job.sourceId)
+  })
+
+  it('really does update when re-inserting a job', async () => {
+    const expectedDateBeforeModified = moment().add(5, 'minutes').toISOString()
+    const expectedDateAfterModified = moment(expectedDateBeforeModified).add(2, 'days').toISOString()
+
+    await truncateElastic()
+    await client.query(`TRUNCATE jobs CASCADE;`)
+
+    job.endDate = expectedDateBeforeModified
+
+    await postJob(job)
+
+    const { results: initialResponse } = await request({ path: '/jobs' })
+    expect(initialResponse, 'check length of initial response').to.have.lengthOf(1)
+
+    const [ { endDate } ] = initialResponse
+    expect(endDate, 'endDate before modifying').to.eql(expectedDateBeforeModified)
+
+    job.endDate = expectedDateAfterModified
+    await postJob(job)
+
+    const { results: afterModified } = await request({ path: '/jobs' })
+    expect(afterModified).to.have.lengthOf(1)
+
+    const [ { endDate: endDateAfterModified } ] = afterModified
+
+    expect(endDateAfterModified).to.eql(expectedDateAfterModified)
   })
 
   after(async () => {
