@@ -6,7 +6,7 @@ describe('services/auth', () => {
   let auth, db
   beforeEach(() => {
     db = {
-      manyOrNone: stub().resolves()
+      oneOrNone: stub().resolves()
     }
 
     auth = proxyquire(`${process.cwd()}/lib/services/auth`, {
@@ -15,20 +15,22 @@ describe('services/auth', () => {
   })
 
   describe('initialization', () => {
-    it('#validateClientAndReturnInfo', async () => {
-      const id = 'foo'
+    it('#validateClientAndReturn', async () => {
+      const clientId = 'foo'
       const secret = 'bar'
 
-      db.manyOrNone
-        .withArgs(match(/SELECT id, secret FROM allowed_clients/i), [id, secret])
-        .resolves([{
-          id,
-          secret
-        }])
+      db.oneOrNone
+        .withArgs(match(/SELECT name FROM allowed_clients/i), [clientId, secret])
+        .resolves({
+          name: 'example AB'
+        })
 
-      const response = await auth.validateClientAndReturnInfo(id, secret)
+      const response = await auth.validateClientAndReturn(clientId, secret)
 
-      expect(response).to.eql(true)
+      expect(response).to.eql({
+        clientName: 'example AB',
+        clientId
+      })
     })
   })
 })

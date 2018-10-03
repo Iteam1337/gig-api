@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 const moment = require('moment')
-const asyncForEach = require(`${process.cwd()}/lib/helpers/asyncForEach`)
+const pMap = require('p-map')
 
 const request = require('../../helpers/request')
 const {
@@ -47,12 +47,12 @@ describe('jobs/handdle-ssn-requirements', () => {
     client = psql()
     await client.connect()
 
-    await asyncForEach([requireSSN, noRequireSSN], async job => {
+    await pMap([requireSSN, noRequireSSN], async job => {
       await req({
         method: 'POST',
         body: job
       })
-    })
+    }, { concurrency: 2 })
   })
 
   it('gets all documents, if no filter is set', async () => {

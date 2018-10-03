@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const { writeFileSync } = require('fs')
+const pMap = require('p-map')
 
 const { Client } = require('elasticsearch')
 const reqdir = require('require-dir')
@@ -113,12 +114,6 @@ function removeJob ({ filename }) {
   })
 }
 
-async function asyncForEach (array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array)
-  }
-}
-
 async function up ({ migrations, lastDocument }) {
   const keys = Object
     .keys(migrations)
@@ -140,7 +135,7 @@ async function up ({ migrations, lastDocument }) {
 
   console.log(`> Migrating files:\n${keys.map(([_date, _name, filename]) => `\n> - ${filename}`)}`)
 
-  await asyncForEach(keys, async ([date, name, filename]) => {
+  await pMap(keys, async ([date, name, filename]) => {
     const dir = migrations[filename]['up']
 
     if (dir && typeof dir === 'function') {
@@ -155,7 +150,7 @@ async function up ({ migrations, lastDocument }) {
     await saveJob({ date, name, filename })
 
     console.log(`\n### MIGRATION ${filename} (UP) ###\n\n`, dir)
-  })
+  }, { concurrency: 2 })
 }
 
 async function down ({ migrations, lastDocument: { filename } }) {
