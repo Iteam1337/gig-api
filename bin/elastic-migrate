@@ -150,7 +150,7 @@ async function up ({ migrations, lastDocument }) {
     await saveJob({ date, name, filename })
 
     console.log(`\n### MIGRATION ${filename} (UP) ###\n\n`, dir)
-  }, { concurrency: 2 })
+  }, { concurrency: 1 })
 }
 
 async function down ({ migrations, lastDocument: { filename } }) {
