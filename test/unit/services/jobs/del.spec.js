@@ -7,10 +7,11 @@ describe('lib/services/jobs/del', () => {
   beforeEach(() => {
     elasticClient = {
       delete: stub(),
-      exists: stub().returns(true)
+      exists: stub().resolves(true)
     }
     db = {
-      del: stub()
+      del: stub(),
+      oneOrNone: stub().resolves({ id: 1337 })
     }
     service = proxyquire(`${process.cwd()}/lib/services/jobs/del`, {
       '../../adapters/elastic': elasticClient,
@@ -20,6 +21,7 @@ describe('lib/services/jobs/del', () => {
 
   describe('#deleteJob', () => {
     it('calls the service and resolves the request', async () => {
+      elasticClient.exists.resolves(true)
       const id = 1
 
       const response = await service.deleteJob(id)
@@ -36,12 +38,12 @@ describe('lib/services/jobs/del', () => {
     })
 
     it('does nothing if job does not exist in elastic', async () => {
-      elasticClient.exists.returns(false)
+      elasticClient.exists.resolves(false)
 
       await service.deleteJob(1)
 
-      expect(elasticClient.delete, 'elasticClient.delete').not.called
-      expect(db.del, 'db.del').not.called
+      expect(elasticClient.delete, 'elasticClient.delete').callCount(0)
+      expect(db.del, 'db.del').callCount(0)
     })
   })
 })
