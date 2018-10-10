@@ -1,7 +1,7 @@
 const restifyErrors = require('restify-errors')
 
-module.exports = function internalError (status = 500, message = '') {
-  switch (Number.parseInt(status, 10)) {
+export function internalError (status: Number = 500, message: String = ''): any  {
+  switch (status) {
     case 500:
       return new restifyErrors.InternalServerError(message)
     case 501:

@@ -4,8 +4,10 @@
   "description": "Gig API",
   "main": "lib/index.js",
   "scripts": {
-    "dev": "npm run migrate && nodemon lib/index",
-    "start": "npm run migrate && npm run start:server",
+    "build": "node_modules/.bin/tsc",
+    "build:dev": "node_modules/.bin/ts-node lib",
+    "dev": "npm run migrate && node_modules/.bin/nodemon",
+    "start": "npm run migrate && npm run build && npm run start:server",
     "start:server": "node ./lib/index.js",
     "lint": "eslint 'lib/**/*.js'",
     "migrate": "bin/migrate up && bin/elastic-migrate up",
@@ -37,8 +39,16 @@
     "ignore": [
       "migrations/*",
       "test/integration/migrations/*",
-      "bin/*"
-    ]
+      "bin/*",
+      "**/*.test.{js,ts}",
+      "**/*.spec.{js,ts}",
+      ".git"
+    ],
+    "watch": [
+      "lib"
+    ],
+    "exec": "npm run build:dev",
+    "ext": "ts,js"
   },
   "dependencies": {
     "bodybuilder": "2.2.15",
@@ -60,7 +70,8 @@
     "restify-errors": "6.1.1",
     "simple-pg": "1.0.0",
     "snakecase-keys": "1.1.1",
-    "striptags": "3.1.1"
+    "striptags": "3.1.1",
+    "typescript": "3.1.2"
   },
   "devDependencies": {
     "chai": "^4.1.2",
@@ -81,6 +92,7 @@
     "request-promise": "^4.2.2",
     "sinon": "^5.0.10",
     "sinon-chai": "^3.1.0",
+    "ts-node": "^7.0.1",
     "uuid": "^3.2.1"
   }
 }
