@@ -1,6 +1,6 @@
 pipeline:
 
-  publish_ci:
+  publish_latest:
     image: plugins/docker
     repo: arbetsformedlingen/gig-api
     secrets: [ docker_username, docker_password ]
