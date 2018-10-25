@@ -1,0 +1,22 @@
+pipeline:
+
+  publish_ci:
+    image: plugins/docker
+    repo: arbetsformedlingen/gig-api
+    secrets: [ docker_username, docker_password ]
+    force_tag: true
+    tags: latest
+    when:
+      branch: master
+      event: push
+
+  publish_tag:
+    image: plugins/docker
+    repo: arbetsformedlingen/gig-api
+    secrets: [ docker_username, docker_password ]
+    force_tag: true
+    tags:
+      - ${DRONE_TAG##v}
+    when:
+      status: success
+      event: tag
